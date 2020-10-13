@@ -36,7 +36,7 @@
     },
     archer: {
       health: 20,
-      damage: 3,
+      damage: 6,
       attackCooldown: 0.5,
       attackRange: 20,
       speed: 14,
@@ -120,12 +120,12 @@
     @setupGlobal(@hero, "red")
     @setupGlobal(@hero2, "blue")
     @clouds = []
-    @hero.isAttackable = false
-    @hero.health = 2
-    @hero.maxHealth = 2
-    @hero2.isAttackable = false
-    @hero2.health = 2
-    @hero2.maxHealth = 2
+    # @hero.isAttackable = false
+    # @hero.health = 2
+    # @hero.maxHealth = 2
+    # @hero2.isAttackable = false
+    # @hero2.health = 2
+    # @hero2.maxHealth = 2
     
   
   setSpawnPositions: ->
@@ -159,10 +159,10 @@
     @generator1=@world.getThangByID("Generator")
     @generator2=@world.getThangByID("Generator 1")
 
-    #@generator1.spawnType="skeleton"
-   # @generator2.spawnType="skeleton"
-    @generator1.isAttackable = false
-    @generator2.isAttackable = false
+    @generator1.spawnType="skeleton"
+    @generator2.spawnType="skeleton"
+   # @generator1.isAttackable = false
+    #@generator2.isAttackable = false
 
     @generator1.spawnDelay = 1
     @generator2.spawnDelay = 1
@@ -269,24 +269,24 @@
     @skele2.pos.y = 54
     @skele1.health = @skele1.maxHealth
     @skele2.health = @skele2.maxHealth
-    @generator1.pos.x = 20
-    @generator1.pos.y = 52
-    @generator2.pos.x = 60
-    @generator2.pos.y = 52
-    @generator1.health = @generator1.maxHealth
-    @generator2.health = @generator2.maxHealth
+    # @generator1.pos.x = 20
+    # @generator1.pos.y = 52
+    # @generator2.pos.x = 60
+    # @generator2.pos.y = 52
+    # @generator1.health = @generator1.maxHealth
+    # @generator2.health = @generator2.maxHealth
 
     
 
 
-    @hero.health = @redHeart.maxHealth
-    @hero.maxHealth = @redHeart.maxHealth
-    @hero.keepTrackedProperty("health")
-    @hero.keepTrackedProperty("maxHealth")
-    @hero2.health = @blueHeart.maxHealth
-    @hero2.maxHealth = @blueHeart.maxHealth
-    @hero2.keepTrackedProperty("health")
-    @hero2.keepTrackedProperty("maxHealth")
+    # @hero.health = @redHeart.maxHealth
+    # @hero.maxHealth = @redHeart.maxHealth
+    # @hero.keepTrackedProperty("health")
+    # @hero.keepTrackedProperty("maxHealth")
+    # @hero2.health = @blueHeart.maxHealth
+    # @hero2.maxHealth = @blueHeart.maxHealth
+    # @hero2.keepTrackedProperty("health")
+    # @hero2.keepTrackedProperty("maxHealth")
     @redHeart.setExists(true)
     @blueHeart.setExists(true)
  
@@ -403,8 +403,7 @@
     @ref.setExists(false)
     @skele1.setExists(true)
     @skele2.setExists(true)
-    @generator1.setExists(true)
-    @generator2.setExists(true)
+   
     @skele1.attack(@redHeart)
     @skele2.attack(@blueHeart)
 
