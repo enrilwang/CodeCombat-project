@@ -141,10 +141,22 @@
     @setupGame()
     @setSpawnPositions()
     @unitCounter = {}
-    @skele1 = @world.getThangByID("Skulldugger")
-    @skele2 = @world.getThangByID("Bonesworth")
+    
+    @skele1 = @world.getThangByID("Bonesworth")
+    @skele2 = @world.getThangByID("Skulldugger")
+    @redHeart = @world.getThangByID("Heart Seed")
+    @blueHeart = @world.getThangByID("Heart Seed 1")
+
+
+
+
     @ref = @world.getThangByID("ref")
     # @ref.say("REF")
+
+    
+
+
+
     @round = 1
     @redWin = 0
     @blueWin = 0
@@ -214,15 +226,31 @@
     return unit
 
   prepareRound: ->
-    @hero.health = @MAX_UNITS
-    @hero.maxHealth = @MAX_UNITS
+
+    #Setup the units properly in preparation of the level reset
+
+
+    @redHeart.health = @redHeart.maxHealth
+    @blueHeart.health = @blueHeart.maxHealth
+    @skele1.pos.x = 20
+    @skele1.pos.y = 54
+    @skele2.pos.x = 60
+    @skele2.pos.y = 54
+    @skele1.health = @skele1.maxHealth
+    @skele2.health = @skele2.maxHealth
+
+
+
+    @hero.health = @redHeart.maxHealth
+    @hero.maxHealth = @redHeart.maxHealth
     @hero.keepTrackedProperty("health")
     @hero.keepTrackedProperty("maxHealth")
-    @hero2.health = @MAX_UNITS
-    @hero2.maxHealth = @MAX_UNITS
+    @hero2.health = @blueHeart.maxHealth
+    @hero2.maxHealth = @blueHeart.maxHealth
     @hero2.keepTrackedProperty("health")
     @hero2.keepTrackedProperty("maxHealth")
-    
+    @redHeart.setExists(true)
+    @blueHeart.setExists(true)
     
     for th in @spawnPositions
       th.setExists(true)
@@ -274,6 +302,9 @@
     @setTimeout((() => @ref.say("GO! GO! GO!")), 4)
     @setTimeout(@clearRects.bind(@), 1)
     @setTimeout(@startRound.bind(@), 4)
+
+    @skele1.attack(@redHeart)
+    @skele2.attack(@blueHeart)
   
   clearField: ->
     @unitCounter = {}
@@ -319,11 +350,18 @@
     return @world.age - @roundStartTime
   
   startRound: () ->
+
+
+
+
+
     @roundStarted = true
     @roundStartTime = @world.age
     @ref.setExists(false)
     @skele1.setExists(true)
     @skele2.setExists(true)
+    @skele1.attack(@redHeart)
+    @skele2.attack(@blueHeart)
     for unit in @unitsInGame when unit
       unit.startsPeaceful = false
       unit.commander = null
@@ -354,8 +392,8 @@
       for th in @clouds when th.exists and th.right
         th.pos.x = @poisonRight + th.shift
         th.keepTrackedProperty("pos")
-    else if @world.age > @roundStartTime + @MAX_ROUND_TIME
-      @startFog()
+    #else if @world.age > @roundStartTime + @MAX_ROUND_TIME - HAVE REMOVED FOR NOW, WE CAN BRING BACK
+    #  @startFog()
     
       
   startFog: ->
@@ -380,10 +418,14 @@
         cloud.maxSpeed = @CLOUD_SPEED
         @clouds.push(cloud)
   
-  checkWinner: () ->
+  checkWinner: () -> #Editing to have win condition based on Heart health
     return if not @roundStarted
-    aliveRed = (th for th in @unitsInGame when th.team is "humans" and th.health > 0).length
-    aliveBlue = (th for th in @unitsInGame when th.team is "ogres" and th.health > 0).length
+    aliveRed = @redHeart.health
+    aliveBlue = @blueHeart.health
+    
+    
+    
+        
     for th in @unitsInGame when th.health > 0
       th.aliveTime = @world.age
     if not aliveRed or not aliveBlue
@@ -429,6 +471,11 @@
     # if @round > @N_ROUNDS
     #   # TIE BREAKING
     #   @world.endWorld(3, 3)
+
+
+
+
+    #Full game determination - Keep
     if @redWin >= @ROUNDS_TO_WIN
       @ref.setExists(true)
       @world.setGoalState("red-win", "success")
