@@ -1,6 +1,7 @@
 {
   UNIT_PARAMETERS: { #Dictionary storing attributes for all units - Includes friendly and enemy units
-    warrior: {
+    #units information below
+    warrior: { 
       health: 40,
       damage: 8,
       attackCooldown: 0.5,
@@ -36,7 +37,7 @@
     },
     archer: {
       health: 20,
-      damage: 6,
+      damage: 10,
       attackCooldown: 0.5,
       attackRange: 20,
       speed: 14,
@@ -52,7 +53,7 @@
     },
     buffer: {
       health: 10,
-      damage: 10,
+      damage: 30,
       attackCooldown: 0.5,
       attackRange: 20,
       speed: 8,
@@ -74,7 +75,7 @@
       speed: 10,
       cost: 0
     },
-
+    #below is the enemies information
     soldier:{
       health: 20,
       damage: 20,
@@ -140,7 +141,7 @@
   }
 
   WAVE_INFO: {      #Dictionary storing information for each wave of AI units being spawned
-
+    #below is the wave information
     wave_0: {
       name: "wave_0",
       time: 5, #Time at which it is spawned
@@ -201,15 +202,13 @@
   }
   
   ORIGINAL_LAST_WAVE: 27
+  END_TIME: 85 #The end time of the game
   LAST_WAVE_TIME: 27 #When is the last wave spawned in 
   WAVES: 7      #No. waves assigned - Must be changed if adding waves 
   ROUNDS_TO_WIN: 1    #No. times a player must win 
-  MAX_ROUND_TIME: 27  #LEGACY - Wave clear 
-  CLOUD_SPEED: 10   #LEGACY - Wave clear 
-  POISON_RATIO: 0.3 #LEGACY - Wave clear 
   ALLOWED_UNIT_EVENT_NAMES: ["spawn"]
-  MAX_UNITS: 9 #LEGACY- Related to the pre round spawning of units from an array 
-  MAX_ROUNDS: 5 
+  MAX_UNITS: 9 #the max unit AI team can have
+  
   IN_RECT_SHIFT: [      #Accessing different corners/positions within the spawning squares
     Vector(3, 0), Vector(3, 3), Vector(3, -3),
     Vector(0, 0), Vector(0, 3), Vector(0, -3),
@@ -219,7 +218,6 @@
   setupGlobal: (hero, color) ->     #EsperEngine (JS Compiler) setup
     game = {
       on: @gameOn.bind(@, hero, color)
-      randInt: @world.rand.rand2,
       setActionFor: @setActionFor.bind(@, hero, color),
       log: console.log
       
@@ -247,13 +245,12 @@
       }
     @setupGlobal(@hero, "red")
     @setupGlobal(@hero2, "blue")
-    @clouds = []
+    # @clouds = []
+    
+    #make the hero cannot be attcked
     @hero.isAttackable = false
-    # @hero.health = 2
-    # @hero.maxHealth = 2
     @hero2.isAttackable = false
-    # @hero2.health = 2
-    # @hero2.maxHealth = 2
+
     
   
   setSpawnPositions: -> #Establish array in which we store the spawn sqaures for each player 
@@ -286,460 +283,42 @@
     
     @ref = @world.getThangByID("ref")
 
-    @round = 3
+    @round = 1
     @redWin = 0
     @blueWin = 0
     @uiTrackedProperties = ["redWin"] 
     @addTrackedProperties ["uiTrackedProperties", "array"]
     @keepTrackedProperty "uiTrackedProperties"
-    @ref.say("ROUND #{@round}. RED: #{@redWin} - BLUE: #{@blueWin}") 
+    @ref.say("RED: #{@redWin} - BLUE: #{@blueWin}") 
     
  
     
-  onFirstFrame: ->
-    for th in @world.thangs when th.health? and not th.isProgrammable
-      th.setExists(false)
+  onFirstFrame: -> #run at the starter
+    for th in @world.thangs when th.health? and not th.isProgrammable   
+      th.setExists(false) 
     @prepareRound()
-    console.log "We get for the left: ", @getPosNeutralXY(1).x , @getPosNeutralXY(1).y
     
-    @hear = (speaker,message,data) ->
-      #if speaker is @hero2
-          #console.log "We found hero2's voice message"
-      #if speaker is @hero
-         # console.log "We found hero1's voice messagge"
-      
-      
+    
+    @hear = (speaker,message,data) -> #Overriding the built-in hear function
       message_arr = message.split(",")
       desired_unit_type = message_arr[0]
       desired_pos = message_arr[1]
-      #console.log "Desired unit is: ", desired_unit_type
-      
       desired_unit_params = @UNIT_PARAMETERS[desired_unit_type]
       
-      if speaker is @hero
-        if @world.getSystem('Inventory').teamGold.humans.gold < desired_unit_params.cost
-          #console.log "Don't have sufficent funds to purchase unit"
+      if speaker is @hero   #Checking which hero said the message (i.e. red or blue) 
+        if @world.getSystem('Inventory').teamGold.humans.gold < desired_unit_params.cost    #Checking if player has sufficent funds available
         else
-          console.log "We can make the unit. Doing now" 
           new_unit = @createNewTower(desired_unit_type, "red", desired_pos)
-          #console.log "NEEWWWW UNNNNIIIIIIT HERE"
-      
       if speaker is @hero2
         if @world.getSystem('Inventory').teamGold.ogres.gold < desired_unit_params.cost
-          #console.log "Don't have sufficent funds to purchase unit"
         else
-          console.log "We can make the unit. Doing now" 
           new_unit = @createNewTower(desired_unit_type, "blue", desired_pos)
-          #console.log "NEEWWWW UNNNNIIIIIIT HERE"
-        
           
-      
-  checkDraw: () ->
-    console.log "Checking for a Draw"
-    if @world.age > @LAST_WAVE_TIME #Time to check if all units are dead
-      redCount = 0 #Number of enemies red still needs to clear 
-      blueCount = 0
-      for th in @world.thangs 
-        if th.aiCreep #aiCreep = True for neutrals, False for ther
-          if th.aiSide == 1 #i.e. Its a creep running down the left side, aiSide is 1
-            redCount++
-          else if th.aiSide == 2
-            blueCount++ 
-      if redCount == 0 and blueCount == 0
-        console.log "THE GAME IS A DRAW"
-        @ref.setExists(true)
-        @ref.say("THE GAME IS A DRAW")
-        @world.setGoalState("red-win", "success")
-        @world.setGoalState("blue-win", "success")
-        
-        
-        
-  chooseAction: ->  #Triggers every frame
-    console.log "left"
-    if @roundStarted
-      @AIMobSpawn()   #Iterates through mob spawn routine
-      @checkWinner()  #Checks if there exists a winner i.e. a player has died 
-      @checkDraw()  #Check for the draw condition
-      @checkGoldPlus()  #Gives gold for death of units
-      @resetWaves()
-     
-      
   
-  
-  getPosXY: (color, n) -> #Returns the (x,y) coordinate of the relevant team's n spawn square
-    rectID = "pos-#{color}-#{n}"
-    rect = @world.getThangByID(rectID)
-    i = @spawnPositionCounters[rectID]
-    @spawnPositionCounters[rectID] += 1
-    shift = @IN_RECT_SHIFT[i % @IN_RECT_SHIFT.length].copy()
-    if color is "blue"
-      shift.x *= -1
-    return rect.pos.copy().add(shift)
-
-  getPosNeutralXY: (n) ->   #Similar to the above function but operates for the neutral enemy spawn squares (2 of them exist) 
-    rectID = "pos-cpu-#{n}"
-    rect = @world.getThangByID(rectID)
-    
-    return rect.pos
-    
-  
-  resetWaves: () ->
-    
-     #If all waves spawned
-        #Set "already_spawned" attribute for each wave to 0
-        #Increase the spawn time (Which is - when we want) by (LAST_WAVE_TIME) 
-        #Increase the number of units 
-        
-      ##We set the pattern of unit types that occurs
-      ##Number of units increases with time 
-      
-    if @world.age > @LAST_WAVE_TIME #
-      for i in [0..@WAVES-1]
-        wave_string = "wave_"+i
-        console.log "WAAAARIO gets",wave_string,"World age = ",@world.age, 
-        wave = @WAVE_INFO[wave_string]
-        @WAVE_INFO[wave_string].no_total_units *= 1.4
-        @WAVE_INFO[wave_string].time += @ORIGINAL_LAST_WAVE
-        @WAVE_INFO[wave_string].already_spawned = 0 
-        #console.log "Post adjustment! Wave time",@WAVE_INFO[wave_string].time, "No. units", @WAVE_INFO[wave_string].no_total_units, "Already?: " , @WAVE_INFO[wave_string].already_spawned
-      @LAST_WAVE_TIME += @ORIGINAL_LAST_WAVE
-      
-      
-  
-  AIMobSpawn: () ->   #Routine handling the constant spawning of enemies
-  
-    for i in [0..@WAVES-1]      #For each wave 
-      wave_string = "wave_"+i
-      wave = @WAVE_INFO[wave_string]
-
-      if (@world.age)>wave.time and wave.already_spawned == 0
-        for j in [0..wave.no_total_units]
-          unit = @createAIUnit(wave.unit_types[0],1) #Change to iterate through all units dependant TO DO
-          @leftNeutral.push unit
-          unit1 = @createAIUnit(wave.unit_types[0],2) 
-          @rightNeutral.push unit1
-        wave.already_spawned = 1
-        
-      
-      
-        
-            
-   checkGoldPlus: () ->
-    
-    for unit in @leftNeutral
-      if unit.health <= 0
-        @world.getSystem('Inventory').teamGold.humans.gold += 10
-       
-        @leftNeutral = (x for x in @leftNeutral when x != unit)
-
-    for unit in @rightNeutral
-      if unit.health <= 0
-        
-        @world.getSystem('Inventory').teamGold.ogres.gold += 10
-        @rightNeutral = (x for x in @rightNeutral when x != unit)          
-
-
-  setupUnit: (unit, unitType, color) ->
-    params = @UNIT_PARAMETERS[unitType]
-    unit.maxHealth = params.health
-    unit.health = params.health
-    unit.keepTrackedProperty("maxHealth")
-    unit.keepTrackedProperty("health")
-    unit.attackDamage = params.damage
-    unit.keepTrackedProperty("attackDamage")
-    unit.attackRange = params.attackRange
-    console.log "Unit attack range: ", unit.attackRange
-    unit.keepTrackedProperty("attackRange")
-    unit.maxSpeed = params.speed
-    unit.keepTrackedProperty("maxSpeed")
-    unit.isAttackable = false #Important - Stops towers being attacked
-
-    if color is "red"
-      @world.getSystem('Inventory').teamGold.humans.gold -= params.cost
-    if color is "blue"
-      @world.getSystem('Inventory').teamGold.ogres.gold -= params.cost
-    
-    if unit.actions.attack?.cooldown
-      unit.actions.attack.cooldown = params.attackCooldown
-    unit.commander = @
-    unit.type = unitType 
-    unit.color = color
-
-
-  setupAIUnit: (unit, unitType) ->
-    params = @UNIT_PARAMETERS[unitType]
-    unit.maxHealth = params.health
-    unit.health = params.health
-    unit.keepTrackedProperty("maxHealth")
-    unit.keepTrackedProperty("health")
-    unit.attackDamage = params.damage
-    unit.keepTrackedProperty("attackDamage")
-    unit.attackRange = params.attackRange
-    unit.keepTrackedProperty("attackRange")
-    unit.maxSpeed = params.speed
-    unit.keepTrackedProperty("maxSpeed")
-      
-    if unit.actions.attack?.cooldown
-      unit.actions.attack.cooldown = params.attackCooldown
-
-    unit.type = unitType 
-    
-  createNewTower: (unitType,color,posNumber) ->
-
-      
-    
-    unit = @createUnit(unitType,color,posNumber)
-
-    unit.startsPeaceful = false
-    unit.commander = null
-      
-    # unit.trigger?("spawn")
-    fn = @actionHelpers[unit.color]?[unit.type]?["spawn"]
-    if fn and _.isFunction(fn)
-      if unit.color is "red"
-        unit.commander = @hero
-      if unit.color is "blue"
-        unit.commander = @hero2
-      unit.didTriggerSpawnEvent = true
-      unit.on("spawn", fn)
-
-    @unitsInGame.push(unit)
-    
-  
-  createUnit: (unitType, color, posNumber) ->
-    if not @UNIT_PARAMETERS[unitType]
-      unitType = "peasant"
-    #TODO checking posN
-    # nColor = if color is "red" then 0 else 1 # TO CHANGE ????
-    pos = @getPosXY(color, posNumber)
-    fullType = "#{unitType}-#{color}"
-    #@unitCounter[fullType] ?= 0
-    #@buildables[fullType].ids = ["#{fullType}-#{@unitCounter[fullType]}"]
-    #@unitCounter[fullType]++
-    unit = @instabuild("#{unitType}-#{color}", pos.x, pos.y, "#{unitType}-#{color}")
-    @setupUnit(unit, unitType, color)
-
-    console.log "Unit is created with dmg: ",unit.attackDamage
-    return unit
-
-  createAIUnit: (unitType, posNumber) ->
-    if not @UNIT_PARAMETERS[unitType]
-      unitType = "peasant"
-    pos = @getPosNeutralXY(posNumber) #Will be 1 or 2 i.e. left or right
-
-
-    unit = @instabuild("cpu-#{unitType}", pos.x, pos.y)
-    @setupAIUnit(unit, unitType)
-    unit.aiSide = posNumber
-    if posNumber == 1 #So we can establish which side they each belong on 
-      unit.attack(@redHeart)
-    else
-      unit.attack(@blueHeart)
-    return unit
-
-  prepareRound: ->
-
-    #Setup the units properly in preparation of the level reset
-    @world.getSystem('Inventory').teamGold.ogres.gold = 200
-    @world.getSystem('Inventory').teamGold.humans.gold = 200
-
-    @redHeart.health = @redHeart.maxHealth
-    @blueHeart.health = @blueHeart.maxHealth
-  
-
-    @hero.health = @redHeart.maxHealth
-    @hero.maxHealth = @redHeart.maxHealth
-    @hero.keepTrackedProperty("health")
-    @hero.keepTrackedProperty("maxHealth")
-    @hero2.health = @blueHeart.maxHealth
-    @hero2.maxHealth = @blueHeart.maxHealth
-    @hero2.keepTrackedProperty("health")
-    @hero2.keepTrackedProperty("maxHealth")
-    @redHeart.setExists(true)
-    @blueHeart.setExists(true)
- 
-    
-    
-
-
-
-    for th in @spawnPositions
-      th.setExists(true)
-      th.say?(th.index)
-      th.alpha = 0.5
-      th.keepTrackedProperty("alpha")
-      @spawnPositionCounters[th.id] = 0
-    @unitsInGame = []
-    @gameStates = {
-      red: {
-        availableUnits: ["knight", "warrior", "thief", "archer", "wizard", "thrower", "buffer", "warlock", "peasant"],
-        myUnits: [],
-        enemyUnits: [],
-        round: @round,
-        myPositions:[[], [], [], [], [], []],
-        enemyPositions:[[], [], [], [], [], []],
-      },
-      blue: {
-        availableUnits: ["knight", "warrior", "thief", "archer", "wizard", "thrower", "buffer", "warlock", "peasant"],
-        myUnits: [],
-        enemyUnits: [],
-        round: @round,
-        myPositions:[[], [], [], [], [], []],
-        enemyPositions:[[], [], [], [], [], []],
-      }
-    }
-    try
-      @gameHandlers["red"]?["start"]?(_.cloneDeep(@gameStates.red))
-      # @gameHandlers["red"]?["prepare"]?(_.cloneDeep(@gameStates.red))
-    catch error
-      @hero.handleProgrammingError error, 'plan'
-    try
-      @gameHandlers["blue"]?["start"]?(_.cloneDeep(@gameStates.blue))
-      # @gameHandlers["blue"]?["prepare"]?(_.cloneDeep(@gameStates.blue))
-    catch error
-      @hero2.handleProgrammingError error, 'plan'
-      
-    redChooseHandler = @gameHandlers["red"]["choose"] or () => "peasant"
-    redPlaceHandler = @gameHandlers["red"]["place"] or () => 0
-    blueChooseHandler = @gameHandlers["blue"]["choose"] or () => "peasant"
-    bluePlaceHandler = @gameHandlers["blue"]["place"] or () => 0
-    for i in [0...@MAX_UNITS]
-      @processTeam("red", "blue", redChooseHandler, redPlaceHandler)
-      @processTeam("blue", "red", blueChooseHandler, bluePlaceHandler)
-    @ref.setExists(true)
-    @ref.say("HEART GUARDIAN!!!")
-    
-    @setTimeout((() => @ref.say(3)), 1)
-    @setTimeout((() => @ref.say(2)), 2)
-    @setTimeout((() => @ref.say(1)), 3)
-    @setTimeout((() => @ref.say("RED VS BLUE! GO!!")), 4)
-    @setTimeout((() => @ref.say("GO! GO! GO!")), 5)
-    @setTimeout(@clearRects.bind(@), 1)
-    @setTimeout(@startRound.bind(@), 5)
-
-    
-  
-  clearField: ->
-    @unitCounter = {}
-    for u in @unitsInGame
-      u.setExists(false)
-    @unitsInGame = []
-    @prepareRound()
-      
-  processTeam: (color, opColor, chooseHandler, placeHandler) ->
-    try
-      unitType = chooseHandler(_.cloneDeep(@gameStates[color]))
-    catch error
-      (if color is 'red' then @hero else @hero2).handleProgrammingError error, 'plan'
-    # TODO UNIT CHECKING
-    if not unitType or not @UNIT_PARAMETERS[unitType]
-      unitType = "peasant"
-    if unitType != "peasant"
-      @gameStates[color].myUnits.push(unitType)
-      @gameStates[opColor].enemyUnits.push(unitType)
-    
-    try
-      rectPosN = placeHandler(_.cloneDeep(@gameStates[color]))
-    catch error
-      (if color is 'red' then @hero else @hero2).handleProgrammingError error, 'plan'
-    # TODO POS CHECKING
-    if isNaN(rectPosN)
-      rectPosN = 0
-    if rectPosN < 0 or rectPosN > 5
-      rectPosN = 0
-    @gameStates[color].myPositions[rectPosN].push(unitType)
-    @gameStates[opColor].enemyPositions[rectPosN].push(unitType)
-    
-    @unitsInGame.push(@createUnit(unitType, color, rectPosN))
-  
-  clearRects: ->
-    for s in @spawnPositions
-      s.alpha = 0
-      s.clearSpeech()
-      s.keepTrackedProperty("alpha")
-  
-  gameTime: ->
-    if not @roundStarted
-      return 0
-    return @world.age - @roundStartTime
-  
-  startRound: () ->
-
-    @roundStarted = true
-    @roundStartTime = @world.age
-    @ref.setExists(false)
-   
-
-    for unit in @world.thangs
-      if unit.ai and unit.colour == "red"
-        unit.attack(@blueHeart)
-      if unit.ai and unit.colour == "blue"
-        unit.attack(@redHeart)
-
-
-    for unit in @unitsInGame when unit
-      unit.startsPeaceful = false
-      unit.commander = null
-      
-      # unit.trigger?("spawn")
-      fn = @actionHelpers[unit.color]?[unit.type]?["spawn"]
-      if fn and _.isFunction(fn)
-        if unit.color is "red"
-          unit.commander = @hero
-        if unit.color is "blue"
-          unit.commander = @hero2
-        unit.didTriggerSpawnEvent = true
-        unit.on("spawn", fn)
-  
-  checkFog: ->
+  checkWinner: () -> #Checks if a player has died at any given point in the game 
     return if not @roundStarted
-    if @poisonFog
-      poisonDist = (@world.age - @poisonStartedTime) * @CLOUD_SPEED
-      @poisonLeft = Math.min(poisonDist, 40)
-      @poisonRight = Math.max(80 - poisonDist, 40)
-      for unit in @unitsInGame when unit.exists and unit.health > 0
-        if unit.pos.x <= @poisonLeft or unit.pos.x >= @poisonRight
-          randomness = 1 + @world.rand.randf() / 5 - 0.1  # from 0.9 to 1.1
-          unit.health -= unit.maxHealth * (@POISON_RATIO * @world.dt * randomness)
-      for th in @clouds when th.exists and th.left
-        th.pos.x = @poisonLeft + th.shift
-        th.keepTrackedProperty("pos")
-      for th in @clouds when th.exists and th.right
-        th.pos.x = @poisonRight + th.shift
-        th.keepTrackedProperty("pos")
-    #else if @world.age > @roundStartTime + @MAX_ROUND_TIME - HAVE REMOVED FOR NOW, WE CAN BRING BACK
-    #  @startFog()
-    
-      
-  startFog: ->
-    @poisonFog = true
-    @poisonLeft = 0
-    @poisonRight = 80
-    @clouds = []
-    @rightClouds = []
-    @poisonStartedTime = @world.age
-    for y in [4..68] by 8
-      for x in [-4..-36] by -8
-        cloud = @instabuild("poison-cloud", x, y)
-        # cloud.moveXY(40 + x, y)
-        cloud.shift = x
-        cloud.left = true
-        cloud.maxSpeed = @CLOUD_SPEED
-        @clouds.push(cloud)
-      for x in [84..116] by 8
-        cloud = @instabuild("poison-cloud", x, y)
-        cloud.shift = x - 80
-        cloud.right = true
-        cloud.maxSpeed = @CLOUD_SPEED
-        @clouds.push(cloud)
-  
-  checkWinner: () -> #Editing to have win condition based on Heart health
-    return if not @roundStarted
-    aliveRed = @redHeart.health >= 0
-    aliveBlue = @blueHeart.health >= 0
-    
-    
-    
+    aliveRed = @redHeart.health > 0
+    aliveBlue = @blueHeart.health > 0
         
     for th in @unitsInGame when th.health > 0
       th.aliveTime = @world.age
@@ -783,12 +362,6 @@
       @roundStarted = false
       @round += 1
       @setTimeout(@clearField.bind(@), 3)
-    # if @round > @N_ROUNDS
-    #   # TIE BREAKING
-    #   @world.endWorld(3, 3)
-
-
-
 
     #Full game determination - Keep
     if @redWin >= @ROUNDS_TO_WIN
@@ -799,22 +372,347 @@
       @ref.setExists(true)
       @world.setGoalState("blue-win", "success")
       @setTimeout((() => @ref.say("GAME WIN BLUE! R:#{@redWin}-B:#{@blueWin}")), 1)
-    if not @roundStarted
-      for th in @clouds
-        th.setExists(false)
-      @clouds = []
-      @poisonFog = false
       
-  randomChooseHandler: (state) ->
-    units = Object.keys(@UNIT_PARAMETERS)
-    return @world.rand.choice(units)
+      
+    #check draw, 85seconds after, which team has more golds, who will win
+    if @world.age >= @END_TIME #Time to check if all units are dead
+     
+      if @world.getSystem('Inventory').teamGold.humans.gold > @world.getSystem('Inventory').teamGold.ogres.gold
+        @ref.setExists(true)
+        @world.setGoalState("red-win", "success")
+        # @setTimeout(() => @ref.say("GAME WIN BLUE!}"))
+      else if @world.getSystem('Inventory').teamGold.humans.gold <= @world.getSystem('Inventory').teamGold.ogres.gold
+        @ref.setExists(true)
+        @world.setGoalState("blue-win", "success")
+        # @setTimeout(() => @ref.say("GAME WIN BLUE!"))
+ 
+        
+        
+        
+  chooseAction: ->  #Triggers every frame
   
-  fixedPlaceHandler: (state) ->
-    return 0
+    if @roundStarted
+      @AIMobSpawn()   #Iterates through mob spawn routine
+      @checkWinner()  #Checks if there exists a winner i.e. a player has died 
+      @checkGoldPlus()  #Gives gold for death of units
+      @resetWaves() #Checks if the wave pattern needs to be refreshed
+     
+      
   
-  randomPlaceHandler: (state) ->
-    return @world.rand.rand2(0, 6)
   
+  getPosXY: (color, n) -> #Returns the (x,y) coordinate of the relevant team's n spawn square
+    rectID = "pos-#{color}-#{n}"
+    rect = @world.getThangByID(rectID)
+    i = @spawnPositionCounters[rectID]
+    @spawnPositionCounters[rectID] += 1
+    shift = @IN_RECT_SHIFT[i % @IN_RECT_SHIFT.length].copy()
+    if color is "blue"
+      shift.x *= -1
+    return rect.pos.copy().add(shift)
+
+  getPosNeutralXY: (n) ->   #Similar to the above function but operates for the neutral enemy spawn squares (2 of them exist) 
+    rectID = "pos-cpu-#{n}"
+    rect = @world.getThangByID(rectID)
+    
+    return rect.pos
+    
+  
+  resetWaves: () ->
+    
+     #If all waves spawned
+        #Set "already_spawned" attribute for each wave to 0
+        #Increase the spawn time (Which is - when we want) by (LAST_WAVE_TIME) 
+        #Increase the number of units 
+        
+      ##We set the pattern of unit types that occurs
+      ##Number of units increases with time 
+      
+    if @world.age > @LAST_WAVE_TIME #
+      for i in [0..@WAVES-1]
+        wave_string = "wave_"+i
+        console.log "WAAAARIO gets",wave_string,"World age = ",@world.age, 
+        wave = @WAVE_INFO[wave_string]
+        @WAVE_INFO[wave_string].no_total_units += 1
+        @WAVE_INFO[wave_string].time += @ORIGINAL_LAST_WAVE
+        @WAVE_INFO[wave_string].already_spawned = 0 
+        #console.log "Post adjustment! Wave time",@WAVE_INFO[wave_string].time, "No. units", @WAVE_INFO[wave_string].no_total_units, "Already?: " , @WAVE_INFO[wave_string].already_spawned
+      @LAST_WAVE_TIME += @ORIGINAL_LAST_WAVE
+      
+      
+  
+  AIMobSpawn: () ->   #Routine handling the constant spawning of enemies
+  
+    for i in [0..@WAVES-1]      #For each wave 
+      wave_string = "wave_"+i
+      wave = @WAVE_INFO[wave_string]
+
+      if (@world.age)>wave.time and wave.already_spawned == 0  #Check if time to spawn the wave
+        for j in [0..wave.no_total_units]
+          unit = @createAIUnit(wave.unit_types[0],1) #Change to iterate through all units dependant TO DO
+          @leftNeutral.push unit    #Stored for later access of enemy units
+          unit1 = @createAIUnit(wave.unit_types[0],2) 
+          @rightNeutral.push unit1
+        wave.already_spawned = 1
+        
+      
+      
+        
+            
+   checkGoldPlus: () ->   #Provides the player with gold each time the unit dies 
+    for unit in @leftNeutral
+      if unit.health <= 0
+        @world.getSystem('Inventory').teamGold.humans.gold += 10   #a died unit give 10 golds
+        @leftNeutral = (x for x in @leftNeutral when x != unit)
+
+    for unit in @rightNeutral
+      if unit.health <= 0
+        @world.getSystem('Inventory').teamGold.ogres.gold += 10
+        @rightNeutral = (x for x in @rightNeutral when x != unit)          
+
+
+  setupUnit: (unit, unitType, color) ->   # Sets up towers
+    #give the units property
+    params = @UNIT_PARAMETERS[unitType]
+    unit.maxHealth = params.health
+    unit.health = params.health
+    unit.keepTrackedProperty("maxHealth")
+    unit.keepTrackedProperty("health")
+    unit.attackDamage = params.damage
+    unit.keepTrackedProperty("attackDamage")
+    unit.attackRange = params.attackRange
+    unit.keepTrackedProperty("attackRange")
+    unit.maxSpeed = params.speed
+    unit.keepTrackedProperty("maxSpeed")
+    unit.isAttackable = false #Important - Stops towers being attacked
+    
+    # reduce the team gold
+    if color is "red"
+      @world.getSystem('Inventory').teamGold.humans.gold -= params.cost   
+    if color is "blue"
+      @world.getSystem('Inventory').teamGold.ogres.gold -= params.cost
+    
+    if unit.actions.attack?.cooldown
+      unit.actions.attack.cooldown = params.attackCooldown
+      
+    unit.commander = @
+    unit.type = unitType 
+    unit.color = color
+
+
+  setupAIUnit: (unit, unitType) ->    #Simiar to above but has no colour 
+    params = @UNIT_PARAMETERS[unitType]
+    unit.maxHealth = params.health
+    unit.health = params.health
+    unit.keepTrackedProperty("maxHealth")
+    unit.keepTrackedProperty("health")
+    unit.attackDamage = params.damage
+    unit.keepTrackedProperty("attackDamage")
+    unit.attackRange = params.attackRange
+    unit.keepTrackedProperty("attackRange")
+    unit.maxSpeed = params.speed
+    unit.keepTrackedProperty("maxSpeed")
+      
+    if unit.actions.attack?.cooldown
+      unit.actions.attack.cooldown = params.attackCooldown
+
+    unit.type = unitType 
+    
+  createNewTower: (unitType,color,posNumber) -> #Creates friendly unit 
+    unit = @createUnit(unitType,color,posNumber)
+
+    unit.startsPeaceful = false
+    unit.commander = null
+      
+
+    fn = @actionHelpers[unit.color]?[unit.type]?["spawn"]
+    if fn and _.isFunction(fn)
+      if unit.color is "red"
+        unit.commander = @hero
+      if unit.color is "blue"
+        unit.commander = @hero2
+      unit.didTriggerSpawnEvent = true
+      unit.on("spawn", fn)
+
+    @unitsInGame.push(unit)   #Access for later
+    
+  
+  createUnit: (unitType, color, posNumber) ->  # Create the new unti
+    if not @UNIT_PARAMETERS[unitType]
+      unitType = "peasant"
+    
+    pos = @getPosXY(color, posNumber)
+    fullType = "#{unitType}-#{color}"
+   
+    unit = @instabuild("#{unitType}-#{color}", pos.x, pos.y, "#{unitType}-#{color}")    #Actual creation of the unit
+    @setupUnit(unit, unitType, color)   #Above - Sets characteristics and stats for the units as set in dictionary 
+
+  
+    return unit
+
+  createAIUnit: (unitType, posNumber) ->    #Similar to the above but for AI
+    if not @UNIT_PARAMETERS[unitType]
+      unitType = "peasant"
+    pos = @getPosNeutralXY(posNumber) #Will be 1 or 2 i.e. left or right
+
+
+    unit = @instabuild("cpu-#{unitType}", pos.x, pos.y)
+    @setupAIUnit(unit, unitType)
+    unit.aiSide = posNumber
+    if posNumber == 1 #Attack command issued on spawning
+      unit.attack(@redHeart)
+    else
+      unit.attack(@blueHeart)
+    return unit
+
+  prepareRound: ->    #Basic attributes/reset at the end of each around
+
+    #Setup the units properly in preparation of the level reset
+    @world.getSystem('Inventory').teamGold.ogres.gold = 200 #for ogres team the original gold
+    @world.getSystem('Inventory').teamGold.humans.gold = 200   #for humans team the original gold
+
+    @redHeart.health = @redHeart.maxHealth
+    @blueHeart.health = @blueHeart.maxHealth
+  
+
+    @hero.health = @redHeart.maxHealth
+    @hero.maxHealth = @redHeart.maxHealth
+    @hero.keepTrackedProperty("health")
+    @hero.keepTrackedProperty("maxHealth")
+    @hero2.health = @blueHeart.maxHealth
+    @hero2.maxHealth = @blueHeart.maxHealth
+    @hero2.keepTrackedProperty("health")
+    @hero2.keepTrackedProperty("maxHealth")
+    @redHeart.setExists(true)
+    @blueHeart.setExists(true)
+
+
+    for th in @spawnPositions
+      th.setExists(true)
+      th.say?(th.index)
+      th.alpha = 0.5
+      th.keepTrackedProperty("alpha")
+      @spawnPositionCounters[th.id] = 0
+      
+    @unitsInGame = []
+    @gameStates = {
+      red: {
+        availableUnits: ["knight", "warrior", "thief", "archer", "wizard", "thrower", "buffer", "warlock", "peasant"], #Spawnable units
+        myUnits: [],
+        enemyUnits: [],
+        round: @round,
+        myPositions:[[], [], [], [], [], []],
+        enemyPositions:[[], [], [], [], [], []],
+      },
+      blue: {
+        availableUnits: ["knight", "warrior", "thief", "archer", "wizard", "thrower", "buffer", "warlock", "peasant"],
+        myUnits: [],
+        enemyUnits: [],
+        round: @round,
+        myPositions:[[], [], [], [], [], []],
+        enemyPositions:[[], [], [], [], [], []],
+      }
+    }
+    try
+      @gameHandlers["red"]?["start"]?(_.cloneDeep(@gameStates.red))
+      # @gameHandlers["red"]?["prepare"]?(_.cloneDeep(@gameStates.red))
+    catch error
+      @hero.handleProgrammingError error, 'plan'
+    try
+      @gameHandlers["blue"]?["start"]?(_.cloneDeep(@gameStates.blue))
+      # @gameHandlers["blue"]?["prepare"]?(_.cloneDeep(@gameStates.blue))
+    catch error
+      @hero2.handleProgrammingError error, 'plan'
+      
+    redChooseHandler = @gameHandlers["red"]["choose"] or () => "peasant"
+    redPlaceHandler = @gameHandlers["red"]["place"] or () => 0
+    blueChooseHandler = @gameHandlers["blue"]["choose"] or () => "peasant"
+    bluePlaceHandler = @gameHandlers["blue"]["place"] or () => 0
+    
+    for i in [0...@MAX_UNITS]
+      @processTeam("red", "blue", redChooseHandler, redPlaceHandler)
+      @processTeam("blue", "red", blueChooseHandler, bluePlaceHandler)
+    @ref.setExists(true)
+    @ref.say("HEART GUARDIAN!!!")
+    
+    @setTimeout((() => @ref.say(3)), 1)
+    @setTimeout((() => @ref.say(2)), 2)
+    @setTimeout((() => @ref.say(1)), 3)
+    @setTimeout((() => @ref.say("RED VS BLUE! GO!!")), 4)
+    @setTimeout((() => @ref.say("GO! GO! GO!")), 5)
+    @setTimeout(@clearRects.bind(@), 1)
+    @setTimeout(@startRound.bind(@), 5)
+
+    
+  
+  clearField: ->    #Remove everything from the field
+    @unitCounter = {}
+    for u in @unitsInGame
+      u.setExists(false)
+    @unitsInGame = []
+    @prepareRound()
+      
+  processTeam: (color, opColor, chooseHandler, placeHandler) ->     #Somewhat unclear to us -> Sets up player programming/source code
+    #automatically spawn unit with AI
+    try
+      unitType = chooseHandler(_.cloneDeep(@gameStates[color]))
+    catch error
+      (if color is 'red' then @hero else @hero2).handleProgrammingError error, 'plan'
+    # TODO UNIT CHECKING
+    if not unitType or not @UNIT_PARAMETERS[unitType]
+      unitType = "peasant"
+    if unitType != "peasant"
+      @gameStates[color].myUnits.push(unitType)
+      @gameStates[opColor].enemyUnits.push(unitType)
+    
+    try
+      rectPosN = placeHandler(_.cloneDeep(@gameStates[color]))
+    catch error
+      (if color is 'red' then @hero else @hero2).handleProgrammingError error, 'plan'
+    # TODO POS CHECKING
+    if isNaN(rectPosN)
+      rectPosN = 0
+    if rectPosN < 0 or rectPosN > 5
+      rectPosN = 0
+    @gameStates[color].myPositions[rectPosN].push(unitType)
+    @gameStates[opColor].enemyPositions[rectPosN].push(unitType)
+    
+    @unitsInGame.push(@createUnit(unitType, color, rectPosN))
+  
+  clearRects: ->
+    for s in @spawnPositions
+      s.alpha = 0
+      s.clearSpeech()
+      s.keepTrackedProperty("alpha")
+  
+  gameTime: ->
+    if not @roundStarted
+      return 0
+    return @world.age - @roundStartTime
+  
+  startRound: () ->
+    @roundStarted = true
+    @roundStartTime = @world.age
+    @ref.setExists(false)
+
+    for unit in @world.thangs
+      if unit.ai and unit.colour == "red"
+        unit.attack(@blueHeart)
+      if unit.ai and unit.colour == "blue"
+        unit.attack(@redHeart)
+
+    for unit in @unitsInGame when unit    #Sets commander/aggro for each unit at the start of the round
+      unit.startsPeaceful = false
+      unit.commander = null
+      
+      fn = @actionHelpers[unit.color]?[unit.type]?["spawn"]
+      if fn and _.isFunction(fn)
+        if unit.color is "red"
+          unit.commander = @hero
+        if unit.color is "blue"
+          unit.commander = @hero2
+        unit.didTriggerSpawnEvent = true
+        unit.on("spawn", fn)
+
   # USER 
   gameOn: (hero, color, eventName, handler) ->
     # TODO ALLOWED eventName checking
@@ -828,12 +726,7 @@
     @actionHelpers[color][type] ?= {}
     # @actionHelpers[color][type][event] ?= []
     @actionHelpers[color][type][event] = fn
-    # for unit in @world.thangs when unit.type is type and unit.exists
-    #   if not unit.on
-    #     console.warn("#{type} need hasEvent")
-    #     continue
-    #   unit.off(event)
-    #   unit.on(event, fn)
+   
     
   # FAKE PLAYER 2
   hero2onChoose: (state) ->
