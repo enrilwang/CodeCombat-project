@@ -89,48 +89,75 @@
         attackCooldown: 0.5,
         attackRange: 5,
         speed: 5
+      },
+      
+      KR:{
+        health: 40,
+        damage: 40, 
+        attackCooldown: 0.5,
+        attackRange: 5,
+        speed: 7
+        
+      }
+      Zagurk:{
+        health: 50,
+        damage: 40, 
+        attackCooldown: 0.5,
+        attackRange: 5,
+        speed: 2
+        
+        
       }
     }
 
     WAVE_INFO: {
+
       wave_0: {
         name: "wave_0",
-        time: 10, #Time at which it is spawned
-        already_spawned: 0, #Wether it has spawned or not
-        unit_types: ["soldier"],
-        no_total_units: 3
-      },
-      
-      wave_1: {
-        name: "wave_1",
         time: 5, #Time at which it is spawned
         already_spawned: 0, #Wether it has spawned or not
         unit_types: ["soldier"],
         no_total_units: 6
       },
       
-      wave_2: {
-        name: "wave_2",
+      wave_1: {
+        name: "wave_1",
         time: 7, #Time at which it is spawned
         already_spawned: 0, #Wether it has spawned or not
         unit_types: ["soldier"],
         no_total_units: 5
       },
       
-      wave_3: {
-        name: "wave_3",
+      wave_2: {
+        name: "wave_2",
         time: 7, #Time at which it is spawned
         already_spawned: 0, #Wether it has spawned or not
         unit_types: ["bigOgre"],
         no_total_units: 2
+      },
+      
+      wave_3: {
+        name: "wave_3",
+        time: 10, #Time at which it is spawned
+        already_spawned: 0, #Wether it has spawned or not
+        unit_types: ["KR"],
+        no_total_units: 2
+      },
+      
+      wave_4: {
+        name: "wave_4",
+        time: 13, #Time at which it is spawned
+        already_spawned: 0, #Wether it has spawned or not
+        unit_types: ["Zagurk"],
+        no_total_units: 1
       }
       
       
     }
 
-    WAVES: 4
+    WAVES: 5
     ROUNDS_TO_WIN: 1
-    MAX_ROUND_TIME: 10
+    MAX_ROUND_TIME: 19
     CLOUD_SPEED: 10
     POISON_RATIO: 0.3
     ALLOWED_UNIT_EVENT_NAMES: ["spawn"]
@@ -149,6 +176,7 @@
         randInt: @world.rand.rand2,
         setActionFor: @setActionFor.bind(@, hero, color),
         log: console.log
+        
         }
       Object.defineProperty(game, 'roundTime', {
         get: () => @gameTime(),
@@ -293,9 +321,9 @@
     AIMobSpawn: () ->
       for i in [0..@WAVES-1]
         wave_string = "wave_"+i
-       # console.log "Wario gets",wave_string
+        console.log "Wario gets",wave_string
         wave = @WAVE_INFO[wave_string]
-      #  console.log "WAAAARIO gets",wave.name,"World age = ",@world.age, "Wave.time = ", wave.time
+        console.log "WAAAARIO gets",wave.name,"World age = ",@world.age, "Wave.time = ", wave.time
         
         if (@world.age)>wave.time and wave.already_spawned == 0
       #    console.log("Creating our wave")
