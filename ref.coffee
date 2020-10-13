@@ -40,7 +40,7 @@
       attackCooldown: 0.5,
       attackRange: 20,
       speed: 14,
-      cost: 5
+      cost: 10
     },
     thrower: {
       health: 25,
@@ -72,7 +72,7 @@
       attackCooldown: 0.5,
       attackRange: 5,
       speed: 10,
-      cost: 5
+      cost: 11
     }
   }
   ROUNDS_TO_WIN: 1
