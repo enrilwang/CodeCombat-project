@@ -316,7 +316,6 @@
       unit.maxSpeed = params.speed
       unit.keepTrackedProperty("maxSpeed")
       unit.isAttackable = false #Important - Stops towers being attacked
-      unit.startsPeaceful = false #Make them hostile to start with
       
       if color is "red"
         @world.getSystem('Inventory').teamGold.humans.gold -= params.cost
@@ -449,13 +448,15 @@
         # @gameHandlers["blue"]?["prepare"]?(_.cloneDeep(@gameStates.blue))
       catch error
         @hero2.handleProgrammingError error, 'plan'
-      redChooseHandler = @gameHandlers["red"]["choose"] or () => "peasant"
+      redChooseHandler = @gameHandlers["red"]["choose"]
+      # or () => "peasant"
       redPlaceHandler = @gameHandlers["red"]["place"] or () => 0
       blueChooseHandler = @gameHandlers["blue"]["choose"] or () => "peasant"
-      bluePlaceHandler = @gameHandlers["blue"]["place"] or () => 0
+      bluePlaceHandler = @gameHandlers["blue"]["place"]
+      # or () => 0
       for i in [0...@MAX_UNITS]
         @processTeam("red", "blue", redChooseHandler, redPlaceHandler)
-        @processTeam("blue", "red", blueChooseHandler, bluePlaceHandler)
+        # @processTeam("blue", "red", blueChooseHandler, bluePlaceHandler)
       @ref.setExists(true)
       @ref.say("ROUND #{@round}. RED: #{@redWin} - BLUE: #{@blueWin}")
       @setTimeout((() => @ref.say(3)), 1)
@@ -480,8 +481,8 @@
       catch error
         (if color is 'red' then @hero else @hero2).handleProgrammingError error, 'plan'
       # TODO UNIT CHECKING
-      if not unitType or not @UNIT_PARAMETERS[unitType]
-        unitType = "peasant"
+      # if not unitType or not @UNIT_PARAMETERS[unitType]
+      #   unitType = "peasant"
       @gameStates[color].myUnits.push(unitType)
       @gameStates[opColor].enemyUnits.push(unitType)
       
