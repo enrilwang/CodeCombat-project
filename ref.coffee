@@ -602,4 +602,5 @@
     
     hero2onPlace: (state) ->
       return @world.rand.rand2(0, 6)
+      
   }
