@@ -5,7 +5,8 @@
       damage: 8,
       attackCooldown: 1.5,
       attackRange: 5,
-      speed: 12
+      speed: 12,
+      cost: 5
     },
 
     knight: {
@@ -13,7 +14,8 @@
       damage: 4,
       attackCooldown: 1,
       attackRange: 5,
-      speed: 8
+      speed: 8,
+      cost: 5
     },
 
     thief: {
@@ -21,53 +23,59 @@
       damage: 10,
       attackCooldown: 0.5,
       attackRange: 4,
-      speed: 16
+      speed: 16,
+      cost: 5
     },
     wizard: {
       health: 10,
       damage: 20,
       attackCooldown: 4,
       attackRange: 30,
-      speed: 10
+      speed: 10,
+      cost: 5
     },
     archer: {
       health: 20,
       damage: 3,
       attackCooldown: 0.5,
       attackRange: 20,
-      speed: 14
+      speed: 14,
+      cost: 5
     },
     thrower: {
       health: 25,
       damage: 7,
       attackCooldown: 0.7,
       attackRange: 10,
-      speed: 15
+      speed: 15,
+      cost: 5
     },
-
     buffer: {
       health: 10,
       damage: 2,
       attackCooldown: 0.5,
       attackRange: 20,
-      speed: 8
+      speed: 8,
+      cost: 5
     },
     warlock: {
       health: 10,
       damage: 2,
       attackCooldown: 0.5,
       attackRange: 20,
-      speed: 8
+      speed: 8,
+      cost: 5
     },
     peasant: {
       health: 10,
       damage: 1,
       attackCooldown: 0.5,
       attackRange: 5,
-      speed: 10
+      speed: 10,
+      cost: 5
     }
   }
-  ROUNDS_TO_WIN: 2
+  ROUNDS_TO_WIN: 1
   MAX_ROUND_TIME: 10
   CLOUD_SPEED: 10
   POISON_RATIO: 0.3
@@ -138,6 +146,8 @@
     
   
   setUpLevel: ->
+    
+    
     @setupGame()
     @setSpawnPositions()
     @unitCounter = {}
@@ -154,7 +164,7 @@
     # @ref.say("REF")
 
     
-
+    
 
 
     @round = 1
@@ -164,6 +174,8 @@
     @addTrackedProperties ["uiTrackedProperties", "array"]
     @keepTrackedProperty "uiTrackedProperties"
     @ref.say("ROUND #{@round}. RED: #{@redWin} - BLUE: #{@blueWin}")
+    
+    
     
   onFirstFrame: ->
     for th in @world.thangs when th.health? and not th.isProgrammable
@@ -199,11 +211,20 @@
     unit.keepTrackedProperty("attackRange")
     unit.maxSpeed = params.speed
     unit.keepTrackedProperty("maxSpeed")
+    
+    if color is "red"
+      @world.getSystem('Inventory').teamGold.humans.gold -= params.cost
+    if color is "blue"
+      @world.getSystem('Inventory').teamGold.ogres.gold -= params.cost
+    
     if unit.actions.attack?.cooldown
       unit.actions.attack.cooldown = params.attackCooldown
     unit.commander = @
     unit.type = unitType
     unit.color = color
+    
+    
+    
     # if @actionHelpers?[color]?[unitType]
     #   for event in @ALLOWED_UNIT_EVENT_NAMES
     #     handler = @actionHelpers?[color][unitType][event]
@@ -228,7 +249,8 @@
   prepareRound: ->
 
     #Setup the units properly in preparation of the level reset
-
+    @world.getSystem('Inventory').teamGold.ogres.gold = 100
+    @world.getSystem('Inventory').teamGold.humans.gold = 100
 
     @redHeart.health = @redHeart.maxHealth
     @blueHeart.health = @blueHeart.maxHealth
@@ -238,7 +260,7 @@
     @skele2.pos.y = 54
     @skele1.health = @skele1.maxHealth
     @skele2.health = @skele2.maxHealth
-
+    
 
 
     @hero.health = @redHeart.maxHealth
@@ -251,6 +273,7 @@
     @hero2.keepTrackedProperty("maxHealth")
     @redHeart.setExists(true)
     @blueHeart.setExists(true)
+ 
     
     for th in @spawnPositions
       th.setExists(true)
