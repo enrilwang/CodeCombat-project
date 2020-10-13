@@ -126,8 +126,13 @@
     # @hero2.isAttackable = false
     # @hero2.health = 2
     # @hero2.maxHealth = 2
+<<<<<<< HEAD
 
 
+=======
+    
+  
+>>>>>>> 4cad07528cad1b8ba1ff3c5538f7ed47df02769e
   setSpawnPositions: ->
 
     @spawnPositions = []
@@ -146,20 +151,33 @@
 
 
   setUpLevel: ->
+<<<<<<< HEAD
 
 
     @setupGame()
     @setSpawnPositions()
     @unitCounter = {}
 
+=======
+    
+    
+    @setupGame()
+    @setSpawnPositions()
+    @unitCounter = {}
+    
+>>>>>>> 4cad07528cad1b8ba1ff3c5538f7ed47df02769e
     @skele1 = @world.getThangByID("Bonesworth")
     @skele2 = @world.getThangByID("Skulldugger")
     @redHeart = @world.getThangByID("Heart Seed")
     @blueHeart = @world.getThangByID("Heart Seed 1")
     @generator1=@world.getThangByID("Generator")
     @generator2=@world.getThangByID("Generator 1")
+<<<<<<< HEAD
   	@hero = @world.getThangByID("Knight")
   	#@hero2 = @world.getThangByID("Knight")
+=======
+
+>>>>>>> 4cad07528cad1b8ba1ff3c5538f7ed47df02769e
     @generator1.spawnType="skeleton"
     @generator2.spawnType="skeleton"
    # @generator1.isAttackable = false
@@ -167,6 +185,7 @@
 
     @generator1.spawnDelay = 1
     @generator2.spawnDelay = 1
+<<<<<<< HEAD
 
 
     @ref = @world.getThangByID("ref")
@@ -174,6 +193,15 @@
 
 
 
+=======
+    
+    
+    @ref = @world.getThangByID("ref")
+    # @ref.say("REF")
+
+    
+    
+>>>>>>> 4cad07528cad1b8ba1ff3c5538f7ed47df02769e
 
 
     @round = 1
@@ -183,6 +211,7 @@
     @addTrackedProperties ["uiTrackedProperties", "array"]
     @keepTrackedProperty "uiTrackedProperties"
     @ref.say("ROUND #{@round}. RED: #{@redWin} - BLUE: #{@blueWin}")
+<<<<<<< HEAD
 #######From Wakka Arena
   unitArray:
     "soldier":
@@ -357,6 +386,11 @@
     @rebuildBody mob
     mob
 ######################################################
+=======
+    
+    
+    
+>>>>>>> 4cad07528cad1b8ba1ff3c5538f7ed47df02769e
   onFirstFrame: ->
   #################################Added from WAKKA Arena
   	@hasSpawnedSkeletons = false
@@ -475,21 +509,36 @@
     unit.keepTrackedProperty("attackRange")
     unit.maxSpeed = params.speed
     unit.keepTrackedProperty("maxSpeed")
+<<<<<<< HEAD
     unit.isAttackable = false #Important
 
+=======
+    unit.isAttackable = false #Important 
+    
+>>>>>>> 4cad07528cad1b8ba1ff3c5538f7ed47df02769e
     if color is "red"
       @world.getSystem('Inventory').teamGold.humans.gold -= params.cost
     if color is "blue"
       @world.getSystem('Inventory').teamGold.ogres.gold -= params.cost
+<<<<<<< HEAD
 
+=======
+    
+>>>>>>> 4cad07528cad1b8ba1ff3c5538f7ed47df02769e
     if unit.actions.attack?.cooldown
       unit.actions.attack.cooldown = params.attackCooldown
     unit.commander = @
-    unit.type = unitType
+    unit.type = unitType 
     unit.color = color
+<<<<<<< HEAD
 
 
 
+=======
+    
+    
+    
+>>>>>>> 4cad07528cad1b8ba1ff3c5538f7ed47df02769e
     # if @actionHelpers?[color]?[unitType]
     #   for event in @ALLOWED_UNIT_EVENT_NAMES
     #     handler = @actionHelpers?[color][unitType][event]
@@ -532,7 +581,11 @@
     # @generator1.health = @generator1.maxHealth
     # @generator2.health = @generator2.maxHealth
 
+<<<<<<< HEAD
 
+=======
+    
+>>>>>>> 4cad07528cad1b8ba1ff3c5538f7ed47df02769e
 
 
     # @hero.health = @redHeart.maxHealth
@@ -545,9 +598,15 @@
     # @hero2.keepTrackedProperty("maxHealth")
     @redHeart.setExists(true)
     @blueHeart.setExists(true)
+<<<<<<< HEAD
 
 
 
+=======
+ 
+    
+    
+>>>>>>> 4cad07528cad1b8ba1ff3c5538f7ed47df02769e
 
 
 
@@ -605,8 +664,13 @@
     @skele1.attack(@redHeart)
     @skele2.attack(@blueHeart)
 
+<<<<<<< HEAD
 
 
+=======
+    
+  
+>>>>>>> 4cad07528cad1b8ba1ff3c5538f7ed47df02769e
   clearField: ->
     @unitCounter = {}
     for u in @unitsInGame
@@ -659,7 +723,11 @@
     @ref.setExists(false)
     @skele1.setExists(true)
     @skele2.setExists(true)
+<<<<<<< HEAD
 
+=======
+   
+>>>>>>> 4cad07528cad1b8ba1ff3c5538f7ed47df02769e
     @skele1.attack(@redHeart)
     @skele2.attack(@blueHeart)
 
@@ -702,8 +770,13 @@
         th.keepTrackedProperty("pos")
     #else if @world.age > @roundStartTime + @MAX_ROUND_TIME - HAVE REMOVED FOR NOW, WE CAN BRING BACK
     #  @startFog()
+<<<<<<< HEAD
 
 
+=======
+    
+      
+>>>>>>> 4cad07528cad1b8ba1ff3c5538f7ed47df02769e
   startFog: ->
     @poisonFog = true
     @poisonLeft = 0
@@ -725,15 +798,26 @@
         cloud.right = true
         cloud.maxSpeed = @CLOUD_SPEED
         @clouds.push(cloud)
+<<<<<<< HEAD
 
+=======
+  
+>>>>>>> 4cad07528cad1b8ba1ff3c5538f7ed47df02769e
   checkWinner: () -> #Editing to have win condition based on Heart health
     return if not @roundStarted
     aliveRed = @redHeart.health
     aliveBlue = @blueHeart.health
+<<<<<<< HEAD
 
 
 
 
+=======
+    
+    
+    
+        
+>>>>>>> 4cad07528cad1b8ba1ff3c5538f7ed47df02769e
     for th in @unitsInGame when th.health > 0
       th.aliveTime = @world.age
     if not aliveRed or not aliveBlue
@@ -834,5 +918,9 @@
 
   hero2onPlace: (state) ->
     return @world.rand.rand2(0, 6)
+<<<<<<< HEAD
 }
 
+=======
+}
+>>>>>>> 4cad07528cad1b8ba1ff3c5538f7ed47df02769e
