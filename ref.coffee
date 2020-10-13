@@ -74,14 +74,61 @@
         speed: 10,
         cost: 11
       },
+
       soldier:{
         health: 20,
         damage: 20,
         attackCooldown: 0.5,
         attackRange: 5,
         speed: 10
+      },
+      
+      bigOgre:{
+        health: 100,
+        damage: 50, 
+        attackCooldown: 0.5,
+        attackRange: 5,
+        speed: 5
       }
     }
+
+    WAVE_INFO: {
+      wave_0: {
+        name: "wave_0",
+        time: 10, #Time at which it is spawned
+        already_spawned: 0, #Wether it has spawned or not
+        unit_types: ["soldier"],
+        no_total_units: 3
+      },
+      
+      wave_1: {
+        name: "wave_1",
+        time: 5, #Time at which it is spawned
+        already_spawned: 0, #Wether it has spawned or not
+        unit_types: ["soldier"],
+        no_total_units: 6
+      },
+      
+      wave_2: {
+        name: "wave_2",
+        time: 7, #Time at which it is spawned
+        already_spawned: 0, #Wether it has spawned or not
+        unit_types: ["soldier"],
+        no_total_units: 5
+      },
+      
+      wave_3: {
+        name: "wave_3",
+        time: 7, #Time at which it is spawned
+        already_spawned: 0, #Wether it has spawned or not
+        unit_types: ["bigOgre"],
+        no_total_units: 2
+      }
+      
+      
+    }
+
+    WAVES: 4
     ROUNDS_TO_WIN: 1
     MAX_ROUND_TIME: 10
     CLOUD_SPEED: 10
@@ -191,8 +238,7 @@
         th.setExists(false)
       @prepareRound()
       console.log "We get for the left: ", @getPosNeutralXY(1).x , @getPosNeutralXY(1).y
-      @createAIUnit("soldier",1)
-      
+
       
     chooseAction: ->
       if @roundStarted
@@ -213,11 +259,18 @@
 
     
     AIMobSpawn: () ->
-     console.log "Getting age post transformation as: ", (@world.age/1000)
-
-
-
-
+      for i in [0..@WAVES-1]
+        wave_string = "wave_"+i
+       # console.log "Wario gets",wave_string
+        wave = @WAVE_INFO[wave_string]
+        console.log "WAAAARIO gets",wave.name,"World age = ",@world.age, "Wave.time = ", wave.time
+        
+        if (@world.age)>wave.time and wave.already_spawned == 0
+          console.log("Creating our wave")
+          for j in [0..wave.no_total_units]
+            @createAIUnit(wave.unit_types[0],1) #Change to iterate through all units dependant TO DO
+            @createAIUnit(wave.unit_types[0],2) 
+          wave.already_spawned = 1
 
 
     setupUnit: (unit, unitType, color) ->
@@ -294,6 +347,10 @@
 
       unit = @instabuild("cpu-#{unitType}", pos.x, pos.y)
       @setupAIUnit(unit, unitType)
+      if posNumber == 1
+        unit.attack(@redHeart)
+      else
+        unit.attack(@blueHeart)
       return unit
 
     prepareRound: ->
@@ -310,14 +367,14 @@
       
 
 
-      # @hero.health = @redHeart.maxHealth
-      # @hero.maxHealth = @redHeart.maxHealth
-      # @hero.keepTrackedProperty("health")
-      # @hero.keepTrackedProperty("maxHealth")
-      # @hero2.health = @blueHeart.maxHealth
-      # @hero2.maxHealth = @blueHeart.maxHealth
-      # @hero2.keepTrackedProperty("health")
-      # @hero2.keepTrackedProperty("maxHealth")
+      @hero.health = @redHeart.maxHealth
+      @hero.maxHealth = @redHeart.maxHealth
+      @hero.keepTrackedProperty("health")
+      @hero.keepTrackedProperty("maxHealth")
+      @hero2.health = @blueHeart.maxHealth
+      @hero2.maxHealth = @blueHeart.maxHealth
+      @hero2.keepTrackedProperty("health")
+      @hero2.keepTrackedProperty("maxHealth")
       @redHeart.setExists(true)
       @blueHeart.setExists(true)
    
@@ -496,8 +553,8 @@
     
     checkWinner: () -> #Editing to have win condition based on Heart health
       return if not @roundStarted
-      aliveRed = @redHeart.health
-      aliveBlue = @blueHeart.health
+      aliveRed = @redHeart.health >= 0
+      aliveBlue = @blueHeart.health >= 0
       
       
       
@@ -528,9 +585,9 @@
         else
           aliveBlue += 1
       
-      @hero.health = aliveRed
+      @hero.health = @redHeart.health
       @hero.keepTrackedProperty("health")
-      @hero2.health = aliveBlue
+      @hero2.health = @blueHeart.health
       @hero2.keepTrackedProperty("health")
       
       
@@ -602,5 +659,4 @@
     
     hero2onPlace: (state) ->
       return @world.rand.rand2(0, 6)
-      
   }
