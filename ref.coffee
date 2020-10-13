@@ -447,7 +447,7 @@
     return @world.rand.choice(units)
   
   fixedPlaceHandler: (state) ->
-    return 0
+    return 1
   
   randomPlaceHandler: (state) ->
     return @world.rand.rand2(0, 6)
