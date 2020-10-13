@@ -258,14 +258,16 @@
             console.log "Don't have sufficent funds to purchase unit"
           else
             console.log "We can make the unit. Doing now" 
-            @createUnit(desired_unit_type,"red",desired_pos)
+            new_unit = @createNewTower(desired_unit_type, "red", desired_pos)
+            console.log "NEEWWWW UNNNNIIIIIIT HERE"
         
-         if speaker is @hero2
+        if speaker is @hero2
           if @world.getSystem('Inventory').teamGold.ogres.gold < desired_unit_params.cost
             console.log "Don't have sufficent funds to purchase unit"
           else
             console.log "We can make the unit. Doing now" 
-            @createUnit(desired_unit_type,"blue",desired_pos)
+            new_unit = @createNewTower(desired_unit_type, "blue", desired_pos)
+            console.log "NEEWWWW UNNNNIIIIIIT HERE"
           
             
         
@@ -312,11 +314,12 @@
       unit.attackDamage = params.damage
       unit.keepTrackedProperty("attackDamage")
       unit.attackRange = params.attackRange
+      console.log "Unit attack range: ", unit.attackRange
       unit.keepTrackedProperty("attackRange")
       unit.maxSpeed = params.speed
       unit.keepTrackedProperty("maxSpeed")
       unit.isAttackable = false #Important - Stops towers being attacked
-      
+
       if color is "red"
         @world.getSystem('Inventory').teamGold.humans.gold -= params.cost
       if color is "blue"
@@ -347,7 +350,9 @@
 
       unit.type = unitType 
       
-      
+    createNewTower: (unitType,color,posNumber) ->
+      unit = @createUnit(unitType,color,posNumber)
+      @unitsInGame.push(unit)
     
     createUnit: (unitType, color, posNumber) ->
       if not @UNIT_PARAMETERS[unitType]
@@ -361,6 +366,8 @@
       #@unitCounter[fullType]++
       unit = @instabuild("#{unitType}-#{color}", pos.x, pos.y, "#{unitType}-#{color}")
       @setupUnit(unit, unitType, color)
+
+      console.log "Unit is created with dmg: ",unit.attackDamage
       return unit
 
     createAIUnit: (unitType, posNumber) ->
@@ -392,11 +399,7 @@
       @redHeart.health = @redHeart.maxHealth
       @blueHeart.health = @blueHeart.maxHealth
     
-    
-
-      
-
-
+  
       @hero.health = @redHeart.maxHealth
       @hero.maxHealth = @redHeart.maxHealth
       @hero.keepTrackedProperty("health")
@@ -448,15 +451,13 @@
         # @gameHandlers["blue"]?["prepare"]?(_.cloneDeep(@gameStates.blue))
       catch error
         @hero2.handleProgrammingError error, 'plan'
-      redChooseHandler = @gameHandlers["red"]["choose"]
-      # or () => "peasant"
+      redChooseHandler = @gameHandlers["red"]["choose"] or () => "peasant"
       redPlaceHandler = @gameHandlers["red"]["place"] or () => 0
       blueChooseHandler = @gameHandlers["blue"]["choose"] or () => "peasant"
-      bluePlaceHandler = @gameHandlers["blue"]["place"]
-      # or () => 0
+      bluePlaceHandler = @gameHandlers["blue"]["place"] or () => 0
       for i in [0...@MAX_UNITS]
         @processTeam("red", "blue", redChooseHandler, redPlaceHandler)
-        # @processTeam("blue", "red", blueChooseHandler, bluePlaceHandler)
+        @processTeam("blue", "red", blueChooseHandler, bluePlaceHandler)
       @ref.setExists(true)
       @ref.say("ROUND #{@round}. RED: #{@redWin} - BLUE: #{@blueWin}")
       @setTimeout((() => @ref.say(3)), 1)
@@ -481,8 +482,8 @@
       catch error
         (if color is 'red' then @hero else @hero2).handleProgrammingError error, 'plan'
       # TODO UNIT CHECKING
-      # if not unitType or not @UNIT_PARAMETERS[unitType]
-      #   unitType = "peasant"
+      if not unitType or not @UNIT_PARAMETERS[unitType]
+        unitType = "peasant"
       @gameStates[color].myUnits.push(unitType)
       @gameStates[opColor].enemyUnits.push(unitType)
       
@@ -512,8 +513,6 @@
       return @world.age - @roundStartTime
     
     startRound: () ->
-
-
 
       @roundStarted = true
       @roundStartTime = @world.age
