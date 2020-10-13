@@ -238,7 +238,37 @@
         th.setExists(false)
       @prepareRound()
       console.log "We get for the left: ", @getPosNeutralXY(1).x , @getPosNeutralXY(1).y
-
+      
+      @hear = (speaker,message,data) ->
+        #if speaker is @hero2
+            #console.log "We found hero2's voice message"
+        #if speaker is @hero
+           # console.log "We found hero1's voice messagge"
+        
+        
+        message_arr = message.split(",")
+        desired_unit_type = message_arr[0]
+        desired_pos = message_arr[1]
+        console.log "Desired unit is: ", desired_unit_type
+        
+        desired_unit_params = @UNIT_PARAMETERS[desired_unit_type]
+        
+        if speaker is @hero
+          if @world.getSystem('Inventory').teamGold.humans.gold < desired_unit_params.cost
+            console.log "Don't have sufficent funds to purchase unit"
+          else
+            console.log "We can make the unit. Doing now" 
+            @createUnit(desired_unit_type,"red",desired_pos)
+        
+         if speaker is @hero2
+          if @world.getSystem('Inventory').teamGold.ogres.gold < desired_unit_params.cost
+            console.log "Don't have sufficent funds to purchase unit"
+          else
+            console.log "We can make the unit. Doing now" 
+            @createUnit(desired_unit_type,"blue",desired_pos)
+          
+            
+        
       
     chooseAction: ->
       if @roundStarted
@@ -263,10 +293,10 @@
         wave_string = "wave_"+i
        # console.log "Wario gets",wave_string
         wave = @WAVE_INFO[wave_string]
-        console.log "WAAAARIO gets",wave.name,"World age = ",@world.age, "Wave.time = ", wave.time
+      #  console.log "WAAAARIO gets",wave.name,"World age = ",@world.age, "Wave.time = ", wave.time
         
         if (@world.age)>wave.time and wave.already_spawned == 0
-          console.log("Creating our wave")
+      #    console.log("Creating our wave")
           for j in [0..wave.no_total_units]
             @createAIUnit(wave.unit_types[0],1) #Change to iterate through all units dependant TO DO
             @createAIUnit(wave.unit_types[0],2) 
@@ -286,6 +316,7 @@
       unit.maxSpeed = params.speed
       unit.keepTrackedProperty("maxSpeed")
       unit.isAttackable = false #Important - Stops towers being attacked
+      unit.startsPeaceful = false #Make them hostile to start with
       
       if color is "red"
         @world.getSystem('Inventory').teamGold.humans.gold -= params.cost
@@ -326,9 +357,9 @@
       # nColor = if color is "red" then 0 else 1 # TO CHANGE ????
       pos = @getPosXY(color, posNumber)
       fullType = "#{unitType}-#{color}"
-      @unitCounter[fullType] ?= 0
-      @buildables[fullType].ids = ["#{fullType}-#{@unitCounter[fullType]}"]
-      @unitCounter[fullType]++
+      #@unitCounter[fullType] ?= 0
+      #@buildables[fullType].ids = ["#{fullType}-#{@unitCounter[fullType]}"]
+      #@unitCounter[fullType]++
       unit = @instabuild("#{unitType}-#{color}", pos.x, pos.y, "#{unitType}-#{color}")
       @setupUnit(unit, unitType, color)
       return unit
@@ -356,8 +387,8 @@
     prepareRound: ->
 
       #Setup the units properly in preparation of the level reset
-      @world.getSystem('Inventory').teamGold.ogres.gold = 100
-      @world.getSystem('Inventory').teamGold.humans.gold = 100
+      @world.getSystem('Inventory').teamGold.ogres.gold = 200
+      @world.getSystem('Inventory').teamGold.humans.gold = 200
 
       @redHeart.health = @redHeart.maxHealth
       @blueHeart.health = @blueHeart.maxHealth
