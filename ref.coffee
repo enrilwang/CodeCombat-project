@@ -379,8 +379,26 @@
       unit.type = unitType 
       
     createNewTower: (unitType,color,posNumber) ->
+
+        
+      
       unit = @createUnit(unitType,color,posNumber)
+
+      unit.startsPeaceful = false
+      unit.commander = null
+        
+      # unit.trigger?("spawn")
+      fn = @actionHelpers[unit.color]?[unit.type]?["spawn"]
+      if fn and _.isFunction(fn)
+        if unit.color is "red"
+          unit.commander = @hero
+        if unit.color is "blue"
+          unit.commander = @hero2
+        unit.didTriggerSpawnEvent = true
+        unit.on("spawn", fn)
+
       @unitsInGame.push(unit)
+      
     
     createUnit: (unitType, color, posNumber) ->
       if not @UNIT_PARAMETERS[unitType]
