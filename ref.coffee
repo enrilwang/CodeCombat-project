@@ -88,7 +88,7 @@
     Vector(0, 0), Vector(0, 3), Vector(0, -3),
     Vector(-3, 0), Vector(-3, 3), Vector(-3, -3)
     ]
-
+  
   setupGlobal: (hero, color) ->
     game = {
       on: @gameOn.bind(@, hero, color)
@@ -107,7 +107,7 @@
       esperEngine.options.bookmarkInvocationMode = "loop"
       esperEngine.addGlobal?('game', game)
       # esperEngine.addGlobal?('game2', @game2)
-
+  
   setupGame: ->
     @actionHelpers = {
       "red": {}
@@ -126,15 +126,10 @@
     # @hero2.isAttackable = false
     # @hero2.health = 2
     # @hero2.maxHealth = 2
-<<<<<<< HEAD
-
-
-=======
     
   
->>>>>>> 4cad07528cad1b8ba1ff3c5538f7ed47df02769e
   setSpawnPositions: ->
-
+    
     @spawnPositions = []
     @spawnPositionCounters = {}
     @redSpawnPositions = []
@@ -148,36 +143,22 @@
       th.index = i
       @blueSpawnPositions.push(th)
     @spawnPositions = @redSpawnPositions.concat(@blueSpawnPositions)
-
-
+    
+  
   setUpLevel: ->
-<<<<<<< HEAD
-
-
-    @setupGame()
-    @setSpawnPositions()
-    @unitCounter = {}
-
-=======
     
     
     @setupGame()
     @setSpawnPositions()
     @unitCounter = {}
     
->>>>>>> 4cad07528cad1b8ba1ff3c5538f7ed47df02769e
     @skele1 = @world.getThangByID("Bonesworth")
     @skele2 = @world.getThangByID("Skulldugger")
     @redHeart = @world.getThangByID("Heart Seed")
     @blueHeart = @world.getThangByID("Heart Seed 1")
     @generator1=@world.getThangByID("Generator")
     @generator2=@world.getThangByID("Generator 1")
-<<<<<<< HEAD
-  	@hero = @world.getThangByID("Knight")
-  	#@hero2 = @world.getThangByID("Knight")
-=======
 
->>>>>>> 4cad07528cad1b8ba1ff3c5538f7ed47df02769e
     @generator1.spawnType="skeleton"
     @generator2.spawnType="skeleton"
    # @generator1.isAttackable = false
@@ -185,15 +166,6 @@
 
     @generator1.spawnDelay = 1
     @generator2.spawnDelay = 1
-<<<<<<< HEAD
-
-
-    @ref = @world.getThangByID("ref")
-    # @ref.say("REF")
-
-
-
-=======
     
     
     @ref = @world.getThangByID("ref")
@@ -201,7 +173,6 @@
 
     
     
->>>>>>> 4cad07528cad1b8ba1ff3c5538f7ed47df02769e
 
 
     @round = 1
@@ -211,282 +182,21 @@
     @addTrackedProperties ["uiTrackedProperties", "array"]
     @keepTrackedProperty "uiTrackedProperties"
     @ref.say("ROUND #{@round}. RED: #{@redWin} - BLUE: #{@blueWin}")
-<<<<<<< HEAD
-#######From Wakka Arena
-  unitArray:
-    "soldier":
-      name:"soldier-m"
-      cost:20
-      count:1
-      team:"humans"
-      key:"soldier"
-    "archer":
-      name:"archer-m"
-      cost:25
-      count:1
-      team:"humans"
-      key:"archer"
-    "thrower":
-      name:"thrower"
-      cost:9
-      count:2
-      team:"ogres"
-      key:"thrower"
-    "scout":
-      name:"scout-m"
-      cost:18
-      count:1
-      team:"ogres"
-      key:"scout"
-
-  roomArray:
-    "upperLeft":
-      pos: x:22, y:66
-      team:"ogres"
-      contains:[
-        "thrower"
-        "thrower"
-        "thrower"
-        "thrower"
-      ]
-      doors:[
-        "a"
-        "b"
-      ]
-    "upperMiddle":
-      pos: x:46, y:66
-      team:"ogres"
-      contains:[
-        "brawler"
-      ]
-      doors:[
-        "c"
-      ]
-    "upperRight":
-      pos: x:82, y:66
-      team:"ogres"
-      contains:[
-        "scout-m"
-        "scout-m"
-        "scout-m"
-      ]
-      doors:[
-        "d"
-      ]
-    "lowerLeft":
-      pos: x:22, y:18
-      team:"humans"
-      contains:[
-        "soldier-m"
-        "soldier-m"
-        "soldier-m"
-        "soldier-m"
-      ]
-      doors:[
-        "g"
-      ]
-    "lowerMiddle":
-      pos: x:58, y:18
-      team:"humans"
-      contains:[
-        "paladin"
-      ]
-      doors:[
-        "h"
-      ]
-    "lowerRight":
-      pos: x:82, y:18
-      team:"humans"
-      contains:[
-        "archer-m"
-        "archer-m"
-      ]
-      doors:[
-        "i"
-        "j"
-      ]
-
-  minionChooseAction: ->
-    isTrapped = true
-    if @knownDoors?
-      for door in @knownDoors
-        if door.health <= 0
-          isTrapped = false
-    else
-      isTrapped = false
-    if not isTrapped
-      enemies = @findEnemies()
-      enemies = _.difference enemies, @findByType("door")
-      enemies = _.union enemies, @findByType(@enemyHero.type);
-      if @enemyHero.team is 'humans'
-        enemies = _.difference enemies, @findByType('witch-hero');
-      else if @enemyHero.team is 'ogres'
-        enemies = _.difference enemies, @findByType('captain');
-      if(enemies.length > 0)
-        @attack @findNearest(enemies);
-      else
-        if @action isnt 'move'
-          curLoc = x:Math.min(Math.max(Math.round(14 * (@pos.x - @map.bLeft.x) / @map.size.x), 0), 14), y: Math.min(Math.max(Math.round(12 * (@pos.y - @map.bLeft.y) / @map.size.y), 0), 12)
-          cI = curLoc.x + curLoc.y * 15
-
-          enemyDir = x:@enemyHero.pos.x - @pos.x, y:@enemyHero.pos.y - @pos.y
-          if enemyDir.x != 0
-            enemyDir.x /= Math.abs(enemyDir.x)
-          if enemyDir.y != 0
-            enemyDir.y /= Math.abs(enemyDir.y)
-
-          validSpots = []
-          if curLoc.x - 1 >= 0 and (@map.array[cI - 1] == 0 or (@map.array[cI] == 3 and (@map.array[cI-1] == 2 or ((@knownDoors? and _.findIndex(@knownDoors, (elem) ->
-            return elem.id == @map.array[cI-1] and elem.health <= 0
-          , @) isnt -1) or (!@knownDoors?)))) or ((@map.array[cI-1] == 8 and @cDoor1.health <= 0) or (@map.array[cI-1] == 9 and @cDoor2.health <= 0))) and @lastDirection?.x isnt 1
-            validSpots.push {index: cI - 1, dir: {x:-1, y:0}, pos: {x:@map.bLeft.x + 6 * (curLoc.x - 1), y:@map.bLeft.y + 6 * curLoc.y}}
-          if curLoc.x + 1 < 15 and (@map.array[cI + 1] == 0 or (@map.array[cI] == 3 and (@map.array[cI+1] == 2 or ((@knownDoors? and _.findIndex(@knownDoors, (elem) ->
-            return elem.id == @map.array[cI+1] and elem.health <= 0
-          , @) isnt -1) or (!@knownDoors?)))) or ((@map.array[cI+1] == 8 and @cDoor1.health <= 0) or (@map.array[cI+1] == 9 and @cDoor2.health <= 0))) and @lastDirection?.x isnt -1
-            validSpots.push {index: cI + 1, dir: {x:1, y:0}, pos: {x:@map.bLeft.x + 6 * (curLoc.x + 1), y:@map.bLeft.y + 6 * curLoc.y}}
-          if curLoc.y - 1 >= 0 and (@map.array[cI - 15] == 0 or (@map.array[cI] == 3 and @map.array[cI-15] == 2) or ((@map.array[cI-15] == 8 and @cDoor1.health <= 0) or (@map.array[cI-15] == 9 and @cDoor2.health <= 0))) and @lastDirection?.y isnt 1
-            validSpots.push {index: cI - 15, dir: {x:0, y:-1}, pos: {x:@map.bLeft.x + 6 * curLoc.x, y:@map.bLeft.y + 6 * (curLoc.y - 1)}}
-          if curLoc.y + 1 < 13 and (@map.array[cI + 15] == 0 or (@map.array[cI] == 3 and @map.array[cI+15] == 2) or ((@map.array[cI+15] == 8 and @cDoor1.health <= 0) or (@map.array[cI+15] == 9 and @cDoor2.health <= 0))) and @lastDirection?.y isnt -1
-            validSpots.push {index: cI + 15, dir: {x:0, y:1}, pos: {x:@map.bLeft.x + 6 * curLoc.x, y:@map.bLeft.y + 6 * (curLoc.y + 1)}}
-
-          primeCandidates = []
-          for element in validSpots
-            if element.dir.x == enemyDir.x
-              primeCandidates.push element
-            if element.dir.y == enemyDir.y
-              primeCandidates.push element
-
-          if primeCandidates.length > 0
-            num = Math.floor(Math.random() * primeCandidates.length)
-            @move primeCandidates[num].pos
-            @lastDirection = primeCandidates[num].dir
-          else if validSpots.length > 0
-            num = Math.floor(Math.random() * validSpots.length)
-            @move validSpots[num].pos
-            @startedMoving = @world.age
-            @lastDirection = validSpots[num].dir
-          else
-            @lastDirection = null
-
-        if @action is 'move'
-          if (@targetPos? and @distanceTo(@targetPos) <= 2.5) or not @targetPos?
-            @setAction 'idle'
-            @setTargetPos null
-
-  createMob: (mob, loc, team) ->
-    mob = @instabuild mob, loc.x - 2 + Math.random() * 4, loc.y - 2 + Math.random() * 4
-    if team is "humans"
-      mob.enemyHero = @hero2
-    else if team is "ogres"
-      mob.enemyHero = @hero
-    mob.chooseAction = @minionChooseAction
-    mob.map = @map
-    mob.cDoor1 = @world.getThangByID "f"
-    mob.cDoor2 = @world.getThangByID "e"
-    @rebuildBody mob
-    mob
-######################################################
-=======
     
     
     
->>>>>>> 4cad07528cad1b8ba1ff3c5538f7ed47df02769e
   onFirstFrame: ->
-  #################################Added from WAKKA Arena
-  	@hasSpawnedSkeletons = false
-    @init @hero
-    @init @hero2
-    #Placement code per room
-    for roomName, room of @roomArray
-      for mobName in room.contains
-        mob = @createMob mobName, room.pos, room.team
-        mob.knownDoors = []
-        for doorName in room.doors
-          mob.knownDoors.push @world.getThangByID doorName
-    #Update hearing code.
-    @hear = (speaker, message, data) ->
-      #Check if speaker is either hero.
-      if speaker is @hero or speaker is @hero2
-        return if speaker.action isnt 'say'  # Automatic message, not one the player intentionally said
-        return if message in ['Vroom!', @icontext.vroom]
-        #Check to see if message is in the unit array, and that the unit is of the speaker's team
-        if @unitArray[message]
-          if @unitArray[message].team is speaker.team
-            #Check if the user has enough
-            if @unitArray[message].cost * @unitArray[message].count <= speaker.gold
-              #For mass-spawn units, repeat for count.
-              for [0...@unitArray[message].count]
-                  #Remove the gold from the team's coffers
-                  @inventorySystem.subtractGoldForTeam speaker.team, @unitArray[message].cost
-                  mob = @createMob @unitArray[message].name, speaker.pos, speaker.team
-            else
-              speaker.sayMessage = @icontext.afford + " \""+message+"\"!"
-          else
-            #Speaker is on the wrong team and can't summon a rival unit!
-            #Toss an error to the speaker.
-            error =  @icontext.attemp + " `\"" + message + "\"`."
-            hint = @icontext.team1 + " *" + speaker.team.substr(0, speaker.team.length - 1) + "* " + @icontext.team2 + " *" + @unitArray[message].team.substr(0, @unitArray[message].team.length - 1) + "*."
-            aether = speaker.getAetherForMethod("plan")
-            problem = aether.createUserCodeProblem type: 'runtime', error: {name: "TryingToSpawnEnemy", message: error, hint: hint, toString: -> message}
-            speaker.addAetherProblemForMethod problem, "plan"
-        else
-          #Unit doesn't exist in the unit array!
-          #Toss an error to the speaker.
-          error = @icontext.unknown + " `\"" + message + "\"`."
-
-          a = _.at(_.pluck(_.sortBy(@unitArray, (_element) ->
-            return @stringScore(message,_element.key, 0.25)
-          ,@),"key").reverse(),0)
-
-          hint = @icontext.mean + ": `\"" + a + "\"`?"
-          aether = speaker.getAetherForMethod("plan")
-          problem = aether.createUserCodeProblem type: 'runtime', error: {name: "UnitDoesntExist", message: error, hint: hint, toString: -> message}
-          speaker.addAetherProblemForMethod problem, "plan"
-#########################################################################
     for th in @world.thangs when th.health? and not th.isProgrammable
       th.setExists(false)
     @prepareRound()
-###########################################Added from WAKKA Arena
-  init: (who) ->
-    #who.actions.say.cooldown = 0.1
-    @rebuildBody who, 2.5
-    who.findsPaths = false
-    @brakeOnSay who
-    who.voiceRangeSquared = 9001 * 9001
-    who.oldCollect = who.performCollect
-    icontext = @icontext
-    who.performCollect = (collectable) ->
-  	if collectable.id is "Haste Potion"
-  	  @effects = (e for e in @effects when e.name isnt 'haste')
-  	  effects = [
-  		{name: 'haste', duration: 9001, reverts: true, factor: 2, targetProperty: 'maxSpeed'}
-  		{name: 'haste', duration: 9001, reverts: true, factor: 2, targetProperty: 'actionTimeFactor'}
-  	  ]
-  	  @addEffect effect, @ for effect in effects
-  	  @sayWithoutBlocking? icontext.vroom
-  	  @oldCollect collectable
-  	else
-  	  @oldCollect collectable
-
-  rebuildBody: (who, size=1) ->
-    who.destroyBody()
-    who.width = size
-    who.height = size
-    who.createBodyDef()
-    who.createBody()
-  brakeOnSay: (who) ->
-    say = who.say
-    who.say = (message, data, _excess) ->
-  	who.brake()
-  	say(message, data, _excess)
-  ##########################################
-    chooseAction: ->
-      if @roundStarted
-        @checkWinner()
-        @checkFog()
-
+    
+  chooseAction: ->
+    if @roundStarted
+      @checkWinner()
+      @checkFog()
+  
   #checkVictory: ->
-
+  
   getPosXY: (color, n) ->
     rectID = "pos-#{color}-#{n}"
     rect = @world.getThangByID(rectID)
@@ -496,7 +206,7 @@
     if color is "blue"
       shift.x *= -1
     return rect.pos.copy().add(shift)
-
+  
   setupUnit: (unit, unitType, color) ->
     params = @UNIT_PARAMETERS[unitType]
     unit.maxHealth = params.health
@@ -509,43 +219,28 @@
     unit.keepTrackedProperty("attackRange")
     unit.maxSpeed = params.speed
     unit.keepTrackedProperty("maxSpeed")
-<<<<<<< HEAD
-    unit.isAttackable = false #Important
-
-=======
     unit.isAttackable = false #Important 
     
->>>>>>> 4cad07528cad1b8ba1ff3c5538f7ed47df02769e
     if color is "red"
       @world.getSystem('Inventory').teamGold.humans.gold -= params.cost
     if color is "blue"
       @world.getSystem('Inventory').teamGold.ogres.gold -= params.cost
-<<<<<<< HEAD
-
-=======
     
->>>>>>> 4cad07528cad1b8ba1ff3c5538f7ed47df02769e
     if unit.actions.attack?.cooldown
       unit.actions.attack.cooldown = params.attackCooldown
     unit.commander = @
     unit.type = unitType 
     unit.color = color
-<<<<<<< HEAD
-
-
-
-=======
     
     
     
->>>>>>> 4cad07528cad1b8ba1ff3c5538f7ed47df02769e
     # if @actionHelpers?[color]?[unitType]
     #   for event in @ALLOWED_UNIT_EVENT_NAMES
     #     handler = @actionHelpers?[color][unitType][event]
     #     if handler and _.isFunction(handler)
     #       unit.off(event)
     #       unit.on(event, handler)
-
+  
   createUnit: (unitType, color, posNumber) ->
     if not @UNIT_PARAMETERS[unitType]
       unitType = "peasant"
@@ -581,11 +276,7 @@
     # @generator1.health = @generator1.maxHealth
     # @generator2.health = @generator2.maxHealth
 
-<<<<<<< HEAD
-
-=======
     
->>>>>>> 4cad07528cad1b8ba1ff3c5538f7ed47df02769e
 
 
     # @hero.health = @redHeart.maxHealth
@@ -598,15 +289,9 @@
     # @hero2.keepTrackedProperty("maxHealth")
     @redHeart.setExists(true)
     @blueHeart.setExists(true)
-<<<<<<< HEAD
-
-
-
-=======
  
     
     
->>>>>>> 4cad07528cad1b8ba1ff3c5538f7ed47df02769e
 
 
 
@@ -664,20 +349,15 @@
     @skele1.attack(@redHeart)
     @skele2.attack(@blueHeart)
 
-<<<<<<< HEAD
-
-
-=======
     
   
->>>>>>> 4cad07528cad1b8ba1ff3c5538f7ed47df02769e
   clearField: ->
     @unitCounter = {}
     for u in @unitsInGame
       u.setExists(false)
     @unitsInGame = []
     @prepareRound()
-
+      
   processTeam: (color, opColor, chooseHandler, placeHandler) ->
     try
       unitType = chooseHandler(_.cloneDeep(@gameStates[color]))
@@ -688,7 +368,7 @@
       unitType = "peasant"
     @gameStates[color].myUnits.push(unitType)
     @gameStates[opColor].enemyUnits.push(unitType)
-
+    
     try
       rectPosN = placeHandler(_.cloneDeep(@gameStates[color]))
     catch error
@@ -700,20 +380,20 @@
       rectPosN = 0
     @gameStates[color].myPositions[rectPosN].push(unitType)
     @gameStates[opColor].enemyPositions[rectPosN].push(unitType)
-
+    
     @unitsInGame.push(@createUnit(unitType, color, rectPosN))
-
+  
   clearRects: ->
     for s in @spawnPositions
       s.alpha = 0
       s.clearSpeech()
       s.keepTrackedProperty("alpha")
-
+  
   gameTime: ->
     if not @roundStarted
       return 0
     return @world.age - @roundStartTime
-
+  
   startRound: () ->
 
 
@@ -723,11 +403,7 @@
     @ref.setExists(false)
     @skele1.setExists(true)
     @skele2.setExists(true)
-<<<<<<< HEAD
-
-=======
    
->>>>>>> 4cad07528cad1b8ba1ff3c5538f7ed47df02769e
     @skele1.attack(@redHeart)
     @skele2.attack(@blueHeart)
 
@@ -741,7 +417,7 @@
     for unit in @unitsInGame when unit
       unit.startsPeaceful = false
       unit.commander = null
-
+      
       # unit.trigger?("spawn")
       fn = @actionHelpers[unit.color]?[unit.type]?["spawn"]
       if fn and _.isFunction(fn)
@@ -751,7 +427,7 @@
           unit.commander = @hero2
         unit.didTriggerSpawnEvent = true
         unit.on("spawn", fn)
-
+  
   checkFog: ->
     return if not @roundStarted
     if @poisonFog
@@ -770,13 +446,8 @@
         th.keepTrackedProperty("pos")
     #else if @world.age > @roundStartTime + @MAX_ROUND_TIME - HAVE REMOVED FOR NOW, WE CAN BRING BACK
     #  @startFog()
-<<<<<<< HEAD
-
-
-=======
     
       
->>>>>>> 4cad07528cad1b8ba1ff3c5538f7ed47df02769e
   startFog: ->
     @poisonFog = true
     @poisonLeft = 0
@@ -798,32 +469,21 @@
         cloud.right = true
         cloud.maxSpeed = @CLOUD_SPEED
         @clouds.push(cloud)
-<<<<<<< HEAD
-
-=======
   
->>>>>>> 4cad07528cad1b8ba1ff3c5538f7ed47df02769e
   checkWinner: () -> #Editing to have win condition based on Heart health
     return if not @roundStarted
     aliveRed = @redHeart.health
     aliveBlue = @blueHeart.health
-<<<<<<< HEAD
-
-
-
-
-=======
     
     
     
         
->>>>>>> 4cad07528cad1b8ba1ff3c5538f7ed47df02769e
     for th in @unitsInGame when th.health > 0
       th.aliveTime = @world.age
     if not aliveRed or not aliveBlue
       @roundStarted = false
-
-
+        
+      
     if not aliveRed and not aliveBlue
       deadUnits = (th for th in @world.thangs when th.exists and th.aliveTime)
       lastUnits = []
@@ -843,13 +503,13 @@
         aliveRed += 1
       else
         aliveBlue += 1
-
+    
     @hero.health = aliveRed
     @hero.keepTrackedProperty("health")
     @hero2.health = aliveBlue
     @hero2.keepTrackedProperty("health")
-
-
+    
+    
     if not aliveRed
       @ref.say("ROUND BLUE WIN!")
       @blueWin += 1
@@ -881,25 +541,25 @@
         th.setExists(false)
       @clouds = []
       @poisonFog = false
-
+      
   randomChooseHandler: (state) ->
     units = Object.keys(@UNIT_PARAMETERS)
     return @world.rand.choice(units)
-
+  
   fixedPlaceHandler: (state) ->
     return 0
-
+  
   randomPlaceHandler: (state) ->
     return @world.rand.rand2(0, 6)
-
-  # USER
+  
+  # USER 
   gameOn: (hero, color, eventName, handler) ->
     # TODO ALLOWED eventName checking
     # TODO CHECK handler
     # console.log(hero.id, color, eventName, handler?)
     @gameHandlers[color] ?= {}
     @gameHandlers[color][eventName] = handler
-
+  
   setActionFor: (hero, color, type, event, fn) ->
     # TODO event type checking
     @actionHelpers[color][type] ?= {}
@@ -911,16 +571,11 @@
     #     continue
     #   unit.off(event)
     #   unit.on(event, fn)
-
+    
   # FAKE PLAYER 2
   hero2onChoose: (state) ->
     return @world.rand.choice(["archer", "warrior", "wizard"])
-
+  
   hero2onPlace: (state) ->
     return @world.rand.rand2(0, 6)
-<<<<<<< HEAD
 }
-
-=======
-}
->>>>>>> 4cad07528cad1b8ba1ff3c5538f7ed47df02769e
