@@ -3,19 +3,19 @@
     warrior: {
       health: 40,
       damage: 8,
-      attackCooldown: 1.5,
+      attackCooldown: 0.5,
       attackRange: 5,
       speed: 12,
-      cost: 5
+      cost: 25
     },
 
     knight: {
       health: 70,
-      damage: 4,
+      damage: 10,
       attackCooldown: 1,
       attackRange: 5,
       speed: 8,
-      cost: 5
+      cost: 15
     },
 
     thief: {
@@ -24,15 +24,15 @@
       attackCooldown: 0.5,
       attackRange: 4,
       speed: 16,
-      cost: 5
+      cost: 30
     },
     wizard: {
       health: 10,
       damage: 20,
-      attackCooldown: 4,
+      attackCooldown: 2,
       attackRange: 30,
       speed: 10,
-      cost: 5
+      cost: 20
     },
     archer: {
       health: 20,
@@ -40,7 +40,7 @@
       attackCooldown: 0.5,
       attackRange: 20,
       speed: 14,
-      cost: 10
+      cost: 20
     },
     thrower: {
       health: 25,
@@ -48,23 +48,23 @@
       attackCooldown: 0.7,
       attackRange: 10,
       speed: 15,
-      cost: 5
+      cost: 25
     },
     buffer: {
       health: 10,
-      damage: 2,
+      damage: 10,
       attackCooldown: 0.5,
       attackRange: 20,
       speed: 8,
-      cost: 5
+      cost: 30
     },
     warlock: {
       health: 10,
-      damage: 2,
-      attackCooldown: 0.5,
+      damage: 50,
+      attackCooldown: 2,
       attackRange: 20,
       speed: 8,
-      cost: 5
+      cost: 40
     },
     peasant: {
       health: 10,
@@ -80,7 +80,8 @@
       damage: 20,
       attackCooldown: 0.5,
       attackRange: 5,
-      speed: 10
+      speed: 10,
+      cost:10
     },
 
     bigOgre:{
@@ -92,7 +93,7 @@
     },
 
     KR:{
-      health: 40,
+      health: 50,
       damage: 40,
       attackCooldown: 0.5,
       attackRange: 5,
@@ -100,12 +101,17 @@
 
     }
     Zagurk:{
-      health: 50,
-      damage: 40,
+      health: 500,
+      damage: 100,
       attackCooldown: 0.5,
       attackRange: 5,
-      speed: 2
+      speed: 3
+    },
+
+    firetrap:{
+      cost:10
     }
+
   }
 
   WAVE_INFO: {
@@ -115,20 +121,20 @@
       time: 5, #Time at which it is spawned
       already_spawned: 0, #Wether it has spawned or not
       unit_types: ["soldier"],
-      no_total_units: 6
+      no_total_units: 4
     },
 
     wave_1: {
       name: "wave_1",
-      time: 7, #Time at which it is spawned
+      time: 8, #Time at which it is spawned
       already_spawned: 0, #Wether it has spawned or not
       unit_types: ["soldier"],
-      no_total_units: 5
+      no_total_units: 4
     },
 
     wave_2: {
       name: "wave_2",
-      time: 7, #Time at which it is spawned
+      time: 10, #Time at which it is spawned
       already_spawned: 0, #Wether it has spawned or not
       unit_types: ["bigOgre"],
       no_total_units: 2
@@ -136,18 +142,18 @@
 
     wave_3: {
       name: "wave_3",
-      time: 10, #Time at which it is spawned
+      time: 15, #Time at which it is spawned
       already_spawned: 0, #Wether it has spawned or not
       unit_types: ["KR"],
-      no_total_units: 2
+      no_total_units: 1
     },
 
     wave_4: {
       name: "wave_4",
-      time: 13, #Time at which it is spawned
+      time: 18, #Time at which it is spawned
       already_spawned: 0, #Wether it has spawned or not
       unit_types: ["Zagurk"],
-      no_total_units: 1
+      no_total_units: 0
     }
 
 
