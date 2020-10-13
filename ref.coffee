@@ -159,6 +159,8 @@
     @generator1=@world.getThangByID("Generator")
     @generator2=@world.getThangByID("Generator 1")
 
+    @hero = @world.getThangByID("Hero Placeholder")
+    
     @generator1.spawnType="skeleton"
     @generator2.spawnType="skeleton"
    # @generator1.isAttackable = false
@@ -269,24 +271,18 @@
     @skele2.pos.y = 54
     @skele1.health = @skele1.maxHealth
     @skele2.health = @skele2.maxHealth
-    # @generator1.pos.x = 20
-    # @generator1.pos.y = 52
-    # @generator2.pos.x = 60
-    # @generator2.pos.y = 52
-    # @generator1.health = @generator1.maxHealth
-    # @generator2.health = @generator2.maxHealth
-
+  
     
 
 
-    # @hero.health = @redHeart.maxHealth
-    # @hero.maxHealth = @redHeart.maxHealth
-    # @hero.keepTrackedProperty("health")
-    # @hero.keepTrackedProperty("maxHealth")
-    # @hero2.health = @blueHeart.maxHealth
-    # @hero2.maxHealth = @blueHeart.maxHealth
-    # @hero2.keepTrackedProperty("health")
-    # @hero2.keepTrackedProperty("maxHealth")
+    @hero.health = @redHeart.maxHealth
+    @hero.maxHealth = @redHeart.maxHealth
+    @hero.keepTrackedProperty("health")
+    @hero.keepTrackedProperty("maxHealth")
+    @hero2.health = @blueHeart.maxHealth
+    @hero2.maxHealth = @blueHeart.maxHealth
+    @hero2.keepTrackedProperty("health")
+    @hero2.keepTrackedProperty("maxHealth")
     @redHeart.setExists(true)
     @blueHeart.setExists(true)
  
