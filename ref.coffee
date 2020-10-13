@@ -88,7 +88,7 @@
     Vector(0, 0), Vector(0, 3), Vector(0, -3),
     Vector(-3, 0), Vector(-3, 3), Vector(-3, -3)
     ]
-  
+
   setupGlobal: (hero, color) ->
     game = {
       on: @gameOn.bind(@, hero, color)
@@ -107,7 +107,7 @@
       esperEngine.options.bookmarkInvocationMode = "loop"
       esperEngine.addGlobal?('game', game)
       # esperEngine.addGlobal?('game2', @game2)
-  
+
   setupGame: ->
     @actionHelpers = {
       "red": {}
@@ -126,10 +126,10 @@
     @hero2.isAttackable = false
     @hero2.health = 2
     @hero2.maxHealth = 2
-    
-  
+
+
   setSpawnPositions: ->
-    
+
     @spawnPositions = []
     @spawnPositionCounters = {}
     @redSpawnPositions = []
@@ -143,28 +143,28 @@
       th.index = i
       @blueSpawnPositions.push(th)
     @spawnPositions = @redSpawnPositions.concat(@blueSpawnPositions)
-    
-  
+
+
   setUpLevel: ->
-    
-    
+
+
     @setupGame()
     @setSpawnPositions()
     @unitCounter = {}
-    
+
     @skele1 = @world.getThangByID("Bonesworth")
     @skele2 = @world.getThangByID("Skulldugger")
     @redHeart = @world.getThangByID("Heart Seed")
     @blueHeart = @world.getThangByID("Heart Seed 1")
-
-
+    @generator1=@world.getThangByID("Generator")
+    @generator2=@world.getThangByID("Generator 1")
 
 
     @ref = @world.getThangByID("ref")
     # @ref.say("REF")
 
-    
-    
+
+
 
 
     @round = 1
@@ -174,21 +174,21 @@
     @addTrackedProperties ["uiTrackedProperties", "array"]
     @keepTrackedProperty "uiTrackedProperties"
     @ref.say("ROUND #{@round}. RED: #{@redWin} - BLUE: #{@blueWin}")
-    
-    
-    
+
+
+
   onFirstFrame: ->
     for th in @world.thangs when th.health? and not th.isProgrammable
       th.setExists(false)
     @prepareRound()
-    
+
   chooseAction: ->
     if @roundStarted
       @checkWinner()
       @checkFog()
-  
+
   #checkVictory: ->
-  
+
   getPosXY: (color, n) ->
     rectID = "pos-#{color}-#{n}"
     rect = @world.getThangByID(rectID)
@@ -198,7 +198,7 @@
     if color is "blue"
       shift.x *= -1
     return rect.pos.copy().add(shift)
-  
+
   setupUnit: (unit, unitType, color) ->
     params = @UNIT_PARAMETERS[unitType]
     unit.maxHealth = params.health
@@ -211,27 +211,27 @@
     unit.keepTrackedProperty("attackRange")
     unit.maxSpeed = params.speed
     unit.keepTrackedProperty("maxSpeed")
-    
+
     if color is "red"
       @world.getSystem('Inventory').teamGold.humans.gold -= params.cost
     if color is "blue"
       @world.getSystem('Inventory').teamGold.ogres.gold -= params.cost
-    
+
     if unit.actions.attack?.cooldown
       unit.actions.attack.cooldown = params.attackCooldown
     unit.commander = @
     unit.type = unitType
     unit.color = color
-    
-    
-    
+
+
+
     # if @actionHelpers?[color]?[unitType]
     #   for event in @ALLOWED_UNIT_EVENT_NAMES
     #     handler = @actionHelpers?[color][unitType][event]
     #     if handler and _.isFunction(handler)
     #       unit.off(event)
     #       unit.on(event, handler)
-  
+
   createUnit: (unitType, color, posNumber) ->
     if not @UNIT_PARAMETERS[unitType]
       unitType = "peasant"
@@ -260,7 +260,12 @@
     @skele2.pos.y = 54
     @skele1.health = @skele1.maxHealth
     @skele2.health = @skele2.maxHealth
-    
+    @generator1.pos.x = 20
+    @generator1.pos.y = 52
+    @generator2.pos.x = 60
+    @generator2.pos.y = 52
+    @generator1.health = @generator1.maxHealth
+    @generator2.health = @generator2.maxHealth
 
 
     @hero.health = @redHeart.maxHealth
@@ -273,8 +278,8 @@
     @hero2.keepTrackedProperty("maxHealth")
     @redHeart.setExists(true)
     @blueHeart.setExists(true)
- 
-    
+
+
     for th in @spawnPositions
       th.setExists(true)
       th.say?(th.index)
@@ -328,14 +333,14 @@
 
     @skele1.attack(@redHeart)
     @skele2.attack(@blueHeart)
-  
+
   clearField: ->
     @unitCounter = {}
     for u in @unitsInGame
       u.setExists(false)
     @unitsInGame = []
     @prepareRound()
-      
+
   processTeam: (color, opColor, chooseHandler, placeHandler) ->
     try
       unitType = chooseHandler(_.cloneDeep(@gameStates[color]))
@@ -346,7 +351,7 @@
       unitType = "peasant"
     @gameStates[color].myUnits.push(unitType)
     @gameStates[opColor].enemyUnits.push(unitType)
-    
+
     try
       rectPosN = placeHandler(_.cloneDeep(@gameStates[color]))
     catch error
@@ -358,23 +363,21 @@
       rectPosN = 0
     @gameStates[color].myPositions[rectPosN].push(unitType)
     @gameStates[opColor].enemyPositions[rectPosN].push(unitType)
-    
+
     @unitsInGame.push(@createUnit(unitType, color, rectPosN))
-  
+
   clearRects: ->
     for s in @spawnPositions
       s.alpha = 0
       s.clearSpeech()
       s.keepTrackedProperty("alpha")
-  
+
   gameTime: ->
     if not @roundStarted
       return 0
     return @world.age - @roundStartTime
-  
+
   startRound: () ->
-
-
 
 
 
@@ -383,12 +386,14 @@
     @ref.setExists(false)
     @skele1.setExists(true)
     @skele2.setExists(true)
+    @generator1.setExists(true)
+    @generator2.setExists(true)
     @skele1.attack(@redHeart)
     @skele2.attack(@blueHeart)
     for unit in @unitsInGame when unit
       unit.startsPeaceful = false
       unit.commander = null
-      
+
       # unit.trigger?("spawn")
       fn = @actionHelpers[unit.color]?[unit.type]?["spawn"]
       if fn and _.isFunction(fn)
@@ -398,7 +403,7 @@
           unit.commander = @hero2
         unit.didTriggerSpawnEvent = true
         unit.on("spawn", fn)
-  
+
   checkFog: ->
     return if not @roundStarted
     if @poisonFog
@@ -417,8 +422,8 @@
         th.keepTrackedProperty("pos")
     #else if @world.age > @roundStartTime + @MAX_ROUND_TIME - HAVE REMOVED FOR NOW, WE CAN BRING BACK
     #  @startFog()
-    
-      
+
+
   startFog: ->
     @poisonFog = true
     @poisonLeft = 0
@@ -440,21 +445,21 @@
         cloud.right = true
         cloud.maxSpeed = @CLOUD_SPEED
         @clouds.push(cloud)
-  
+
   checkWinner: () -> #Editing to have win condition based on Heart health
     return if not @roundStarted
     aliveRed = @redHeart.health
     aliveBlue = @blueHeart.health
-    
-    
-    
-        
+
+
+
+
     for th in @unitsInGame when th.health > 0
       th.aliveTime = @world.age
     if not aliveRed or not aliveBlue
       @roundStarted = false
-        
-      
+
+
     if not aliveRed and not aliveBlue
       deadUnits = (th for th in @world.thangs when th.exists and th.aliveTime)
       lastUnits = []
@@ -474,13 +479,13 @@
         aliveRed += 1
       else
         aliveBlue += 1
-    
+
     @hero.health = aliveRed
     @hero.keepTrackedProperty("health")
     @hero2.health = aliveBlue
     @hero2.keepTrackedProperty("health")
-    
-    
+
+
     if not aliveRed
       @ref.say("ROUND BLUE WIN!")
       @blueWin += 1
@@ -512,25 +517,25 @@
         th.setExists(false)
       @clouds = []
       @poisonFog = false
-      
+
   randomChooseHandler: (state) ->
     units = Object.keys(@UNIT_PARAMETERS)
     return @world.rand.choice(units)
-  
+
   fixedPlaceHandler: (state) ->
     return 0
-  
+
   randomPlaceHandler: (state) ->
     return @world.rand.rand2(0, 6)
-  
-  # USER 
+
+  # USER
   gameOn: (hero, color, eventName, handler) ->
     # TODO ALLOWED eventName checking
     # TODO CHECK handler
     # console.log(hero.id, color, eventName, handler?)
     @gameHandlers[color] ?= {}
     @gameHandlers[color][eventName] = handler
-  
+
   setActionFor: (hero, color, type, event, fn) ->
     # TODO event type checking
     @actionHelpers[color][type] ?= {}
@@ -542,11 +547,11 @@
     #     continue
     #   unit.off(event)
     #   unit.on(event, fn)
-    
+
   # FAKE PLAYER 2
   hero2onChoose: (state) ->
     return @world.rand.choice(["archer", "warrior", "wizard"])
-  
+
   hero2onPlace: (state) ->
     return @world.rand.rand2(0, 6)
 }
