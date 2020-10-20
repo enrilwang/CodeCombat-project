@@ -137,6 +137,10 @@
       speed: 4
       cost:6
     
+    },
+    potion:{
+      cost:10  
+      
     }
   }
 
