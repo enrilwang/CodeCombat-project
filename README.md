@@ -1,23 +1,31 @@
-### COMP3888 Capstone Project ###
-We created an tower defence arena level for the CodeCombat platform: Heart Guardian.
+# **COMP3888 CodeCombat Project**#
+A Tower Defence arena level on the CodeCombat platform: Heart Guardian.
 
-### Access our arenas ###
-Heart Guardian play link: 
+# Access Our Game#
+[Heart Guardian](https://codecombat.com/play/level/treacherous-tower-defense)
 
-### How to play our arena ###
-Programming language: Python
+# How To Play#
+## Programming language##
+Python
 
-Target users: CS1-4 & GD1 CodeCombat Students
+## Target users##
+CS1-6 & GD1 CodeCombat Students
 
-Goal: Defend your heart and survive for as long as possible
+## Goal##
+Defend your heart and survive for as long as possible
 
-In this arena, you control a hero who will fight against incomming waves of enemy units. 
+In this arena, you control a hero who will fight against incomming waves of enemy units.
+
 Your hero has the ability to spend gold to spawn allied units who will help in this battle.
-Gold is earned by killing enemies. 
-Traps can also be used to damage enemies.
-Build fences to slow down the enemy. 
-Potions can be collected to heal your heart. 
 
-Methods to use:
-- hero.say() to spawn units
-- buildxy() to build fences/palisades
+Gold is earned by killing enemies.
+
+Traps can also be used to damage enemies.
+
+Build fences to slow down the enemy.
+
+Potions can be collected to heal your heart.
+
+## Methods to use##
+* hero.say("Type,Position"): summor a unit on the specfic position
+* hero.buildXY("Item",X,Y): build an item on that coordinate point
