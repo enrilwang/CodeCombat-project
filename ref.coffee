@@ -280,9 +280,10 @@
    
     @redHeart = @world.getThangByID("Heart Seed")   #The players' bases
     @blueHeart = @world.getThangByID("Heart Seed 1")
-    
     @ref = @world.getThangByID("ref")
-
+    # @potion = @world.getThangByID("Health Medium Potion")
+    # @potion2 = @world.getThangByID("Health Medium Potion 1")
+    
     @round = 1
     @redWin = 0
     @blueWin = 0
@@ -396,7 +397,7 @@
       @checkWinner()  #Checks if there exists a winner i.e. a player has died 
       @checkGoldPlus()  #Gives gold for death of units
       @resetWaves() #Checks if the wave pattern needs to be refreshed
-     
+       #spawn potions for hero to use
       
   
   
@@ -563,7 +564,24 @@
     else
       unit.attack(@blueHeart)
     return unit
-
+  #
+  # createPotion: (pos) ->
+  #   @build "health-potion"
+  #   Potion = @performBuild()
+  #   Potion.team = 'neutral'
+  #   Potion.pos.x = pos.x
+  #   Potion.pos.y = pos.y
+  #   #Potion.collectableProperties[0][0][1] = 200
+  #   return Potion
+  
+  # spawnPotion: ()->
+  #   spawnTime = Math.round(@world.age * 10) / 10
+  #   if spawnTime % 10.0 == 0 # spawn potion every 30 sec interval
+  #     if @potionRight.exists == false
+  #       @potionRight = @createPotion({"x": 66, "y": 15})
+  #     if @potionLeft.exists == false
+  #       @potionLeft = @createPotion({"x": 15, "y": 15})
+    
   prepareRound: ->    #Basic attributes/reset at the end of each around
 
     #Setup the units properly in preparation of the level reset
@@ -584,8 +602,9 @@
     @hero2.keepTrackedProperty("maxHealth")
     @redHeart.setExists(true)
     @blueHeart.setExists(true)
-
-
+    # @potionRight = @createPotion({"x": 66, "y": 15})
+    # @potionLeft = @createPotion({"x": 15, "y": 15})
+    
     for th in @spawnPositions
       th.setExists(true)
       th.say?(th.index)
