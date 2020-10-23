@@ -27,5 +27,20 @@ Build fences to slow down the enemy.
 Potions can be collected to heal your heart.
 
 ## Methods to use##
-* hero.say("Type,Position"): summor a unit on the specfic position
-* hero.buildXY("Item",X,Y): build an item on that coordinate point
+* hero.say("Type,Position"): summon a unit on the specfic position
+* hero.buildXY("Item",x,y): build an item on (x,y) points.
+
+
+## Units we can summon and the cost##
++ warrior: 25 gold
++ knight: 15 gold
++ thief: 30 gold
++ wizard: 20 gold
++ archer: 20 gold
++ thrower: 25 gold
++ buffer: 30 gold
++ warlock: 40 gold
+
+## Items we can build and the cost##
++ fence: 5 gold
++ palisade: 10 gold
