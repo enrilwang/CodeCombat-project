@@ -61,7 +61,11 @@
     },
     warlock: {
       health: 10,
+<<<<<<< HEAD
       damage: 20,
+=======
+      damage: 12,
+>>>>>>> d72ae7b... implemented buffer unit functionality, details could be checked in buffAdd function
       attackCooldown: 2,
       attackRange: 20,
       speed: 8,
@@ -397,17 +401,24 @@
       if th.type == "buffer"
         @allBuff.push(th)
 
-    for buff in @allBuff
-      for th in @unitsInGame
-        if buff.color == "blue"
-          if th.pos.x <= buff.pos.x + 5 and th.pos.x >= buff.pos.x - 5 and th.pos.y <= buff.pos.y + 5 and th.pos.y >= buff.pos.y - 5 and th.color == buff.color and th.type != "buffer" and th.type != "peasant"
-            th.attackDamage = @UNIT_PARAMETERS[th.type].damage + 5
-            th.actions.attack.cooldown = @UNIT_PARAMETERS[th.type].attackCooldown - 0.5
-        else if buff.color == "red"
-          if th.pos.x <= buff.pos.x + 5 and th.pos.x >= buff.pos.x - 5 and th.pos.y <= buff.pos.y + 5 and th.pos.y >= buff.pos.y - 5 and th.color == buff.color and th.type != "buffer" and th.type != "peasant"
-            th.attackDamage = @UNIT_PARAMETERS[th.type].damage + 5
-            th.actions.attack.cooldown = @UNIT_PARAMETERS[th.type].attackCooldown - 0.5
 
+    for th in @unitsInGame
+      for buff in @allBuff
+        if buff.color == "blue"
+          if th.pos.x <= buff.pos.x + 9 and th.pos.x >= buff.pos.x - 9 and th.pos.y <= buff.pos.y + 8 and th.pos.y >= buff.pos.y - 8 and th.color == buff.color and th.type != "buffer" and th.type != "peasant"
+            console.log th.type
+            th.attackDamage+= 0.5
+            th.health = 100
+            if th.attackDamage >= 20
+              th.attackDamage = 20
+            console.log th.attackDamage
+        else if buff.color == "red"
+           if  th.pos.x <= buff.pos.x + 9  and th.pos.x >= buff.pos.x - 9 and th.pos.y <= buff.pos.y + 8 and th.pos.y >= buff.pos.y - 8 and th.color == buff.color and th.type != "buffer" and th.type!="peasant"
+            console.log th.color
+            th.attackDamage+= 0.5
+            if th.attackDamage >= 20
+              th.attackDamage = 20
+              # console.log th.attackDamage
 
 
   chooseAction: ->  #Triggers every frame
@@ -476,6 +487,12 @@
         wave.already_spawned = 1
 
 
+<<<<<<< HEAD
+=======
+
+
+
+>>>>>>> d72ae7b... implemented buffer unit functionality, details could be checked in buffAdd function
    checkGoldPlus: () ->   #Provides the player with gold each time the unit dies
     for unit in @leftNeutral
       if unit.health <= 0
@@ -632,7 +649,7 @@
     @unitsInGame = []
     @gameStates = {
       red: {
-        availableUnits: ["knight", "warrior", "thief", "archer", "wizard", "thrower", "buffer", "warlock", "peasant"], #Spawnable units
+        availableUnits: ["knight", "warrior", "thief", "archer", "wizard", "thrower", "warlock", "peasant"], #Spawnable units
         myUnits: [],
         enemyUnits: [],
         round: @round,
@@ -640,7 +657,7 @@
         enemyPositions:[[], [], [], [], [], []],
       },
       blue: {
-        availableUnits: ["knight", "warrior", "thief", "archer", "wizard", "thrower", "buffer", "warlock", "peasant"],
+        availableUnits: ["knight", "warrior", "thief", "archer", "wizard", "thrower",  "warlock", "peasant"],
         myUnits: [],
         enemyUnits: [],
         round: @round,
