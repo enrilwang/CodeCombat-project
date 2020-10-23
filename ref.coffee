@@ -391,24 +391,36 @@
         @world.setGoalState("blue-win", "success")
         # @setTimeout(() => @ref.say("GAME WIN BLUE!"))
 
-  buffAdd: ()->
-    @allBuff = []
+  bufferUpdate: ()->
+    @allBuffer = []
     for th in @unitsInGame
       if th.type == "buffer"
-        @allBuff.push(th)
+        @allBuffer.push(th)
 
-    for buff in @allBuff
+    for buffer in @allBuffer
       for th in @unitsInGame
-        if buff.color == "blue"
-          if th.pos.x <= buff.pos.x + 5 and th.pos.x >= buff.pos.x - 5 and th.pos.y <= buff.pos.y + 5 and th.pos.y >= buff.pos.y - 5 and th.color == buff.color and th.type != "buffer" and th.type != "peasant"
+        if buffer.color == "blue"
+          if th.pos.x <= buffer.pos.x + 5 and th.pos.x >= buffer.pos.x - 5 and th.pos.y <= buffer.pos.y + 5 and th.pos.y >= buffer.pos.y - 5 and th.color == buffer.color and th.type != "buffer" and th.type != "peasant"
             th.attackDamage = @UNIT_PARAMETERS[th.type].damage + 5
             th.actions.attack.cooldown = @UNIT_PARAMETERS[th.type].attackCooldown - 0.5
-        else if buff.color == "red"
-          if th.pos.x <= buff.pos.x + 5 and th.pos.x >= buff.pos.x - 5 and th.pos.y <= buff.pos.y + 5 and th.pos.y >= buff.pos.y - 5 and th.color == buff.color and th.type != "buffer" and th.type != "peasant"
+        else if buffer.color == "red"
+          if th.pos.x <= buffer.pos.x + 5 and th.pos.x >= buffer.pos.x - 5 and th.pos.y <= buffer.pos.y + 5 and th.pos.y >= buffer.pos.y - 5 and th.color == buffer.color and th.type != "buffer" and th.type != "peasant"
             th.attackDamage = @UNIT_PARAMETERS[th.type].damage + 5
             th.actions.attack.cooldown = @UNIT_PARAMETERS[th.type].attackCooldown - 0.5
 
+  warlockUpdate: ()->
+    @allWarlock = []
+    for th in @unitsInGame
+      if th.type == "warlock"
+        @allWarlock.push(th)
 
+    for warlock in @allWarlock
+      if warlock.color == "blue"
+        for th in @rightNeutral
+          th.maxSpeed = @UNIT_PARAMETERS[th.type].speed / 2
+      else if warlock.color == "red"
+        for th in @leftNeutral
+          th.maxSpeed = @UNIT_PARAMETERS[th.type].speed / 2
 
   chooseAction: ->  #Triggers every frame
 
@@ -418,7 +430,8 @@
       @checkGoldPlus()  #Gives gold for death of units
       @resetWaves() #Checks if the wave pattern needs to be refreshed
        #spawn potions for hero to use
-      @buffAdd()
+      @bufferUpdate()
+      @warlockUpdate()
 
 
 
