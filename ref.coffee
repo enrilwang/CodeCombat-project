@@ -69,7 +69,7 @@
     },
     peasant: {
       health: 10,
-      damage: 1,
+      damage: -5,
       attackCooldown: 0.5,
       attackRange: 5,
       speed: 10,

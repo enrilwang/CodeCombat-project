@@ -14,7 +14,7 @@ CS1-6 & GD1 CodeCombat Students
 ## Goal##
 Defend your heart and survive for as long as possible
 
-In this arena, you control a hero who will fight against incomming waves of enemy units.
+In this arena, you control a hero who will fight against incomeing waves of enemy units.
 
 Your hero has the ability to spend gold to spawn allied units who will help in this battle.
 
@@ -25,6 +25,8 @@ Traps can also be used to damage enemies.
 Build fences to slow down the enemy.
 
 Potions can be collected to heal your heart.
+
+After 85 seconds, if player and cpu both alive, who get more money who will win the game.
 
 ## Methods to use##
 * hero.say("Type,Position"): summor a unit on the specfic position
