@@ -400,12 +400,16 @@
     for buffer in @allBuffer
       for th in @unitsInGame
         if buffer.color == "blue"
-          if th.pos.x <= buffer.pos.x + 5 and th.pos.x >= buffer.pos.x - 5 and th.pos.y <= buffer.pos.y + 5 and th.pos.y >= buffer.pos.y - 5 and th.color == buffer.color and th.type != "buffer" and th.type != "peasant"
+          if th.pos.x <= buffer.pos.x + 8 and th.pos.x >= buffer.pos.x - 8 and th.pos.y <= buffer.pos.y + 8 and th.pos.y >= buffer.pos.y - 8 and th.color == buffer.color and th.type != "buffer" and th.type != "peasant"
             th.attackDamage = @UNIT_PARAMETERS[th.type].damage + 5
+            console.log "SSSSS"
+            console.log th.attackDamage
             th.actions.attack.cooldown = @UNIT_PARAMETERS[th.type].attackCooldown - 0.5
         else if buffer.color == "red"
-          if th.pos.x <= buffer.pos.x + 5 and th.pos.x >= buffer.pos.x - 5 and th.pos.y <= buffer.pos.y + 5 and th.pos.y >= buffer.pos.y - 5 and th.color == buffer.color and th.type != "buffer" and th.type != "peasant"
+          if th.pos.x <= buffer.pos.x + 8 and th.pos.x >= buffer.pos.x - 8 and th.pos.y <= buffer.pos.y + 8 and th.pos.y >= buffer.pos.y - 8 and th.color == buffer.color and th.type != "buffer" and th.type != "peasant"
             th.attackDamage = @UNIT_PARAMETERS[th.type].damage + 5
+            console.log "SSSSS"
+            console.log th.attackDamage
             th.actions.attack.cooldown = @UNIT_PARAMETERS[th.type].attackCooldown - 0.5
 
   warlockUpdate: ()->
