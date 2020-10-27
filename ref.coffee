@@ -276,6 +276,8 @@
 
     @redHeart = @world.getThangByID("Heart Seed")   #The players' bases
     @blueHeart = @world.getThangByID("Heart Seed 1")
+    @redHeart.isCollectable = false
+    @blueHeart.isCollectable = false
     @ref = @world.getThangByID("ref")
     # @potion = @world.getThangByID("Health Medium Potion")
     # @potion2 = @world.getThangByID("Health Medium Potion 1")
@@ -303,7 +305,7 @@
         desired_pos = message_arr[1]
         desired_unit_params = @UNIT_PARAMETERS[desired_unit_type]
 
-        
+
 
         if @UNIT_PARAMETERS[desired_unit_type]
           if speaker is @hero   #Checking which hero said the message (i.e. red or blue)
