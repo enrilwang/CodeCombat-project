@@ -94,14 +94,6 @@
       cost: 100
     },
 
-    KR:{
-      health: 50,
-      damage: 40,
-      attackCooldown: 0.5,
-      attackRange: 5,
-      speed: 7
-
-    },
     Upfish:{
       health: 50,
       damage: 40,
@@ -306,18 +298,22 @@
 
     @hear = (speaker,message,data) -> #Overriding the built-in hear function
       message_arr = message.split(",")
-      desired_unit_type = message_arr[0]
-      desired_pos = message_arr[1]
-      desired_unit_params = @UNIT_PARAMETERS[desired_unit_type]
+      desired_unit_type = message_arr[0] #Safe
+      if message_arr.length == 2
+        desired_pos = message_arr[1]
+        desired_unit_params = @UNIT_PARAMETERS[desired_unit_type]
 
-      if speaker is @hero   #Checking which hero said the message (i.e. red or blue)
-        if @world.getSystem('Inventory').teamGold.humans.gold < desired_unit_params.cost    #Checking if player has sufficent funds available
-        else
-          new_unit = @createNewTower(desired_unit_type, "red", desired_pos)
-      if speaker is @hero2
-        if @world.getSystem('Inventory').teamGold.ogres.gold < desired_unit_params.cost
-        else
-          new_unit = @createNewTower(desired_unit_type, "blue", desired_pos)
+        
+
+        if @UNIT_PARAMETERS[desired_unit_type]
+          if speaker is @hero   #Checking which hero said the message (i.e. red or blue)
+            if @world.getSystem('Inventory').teamGold.humans.gold < desired_unit_params.cost    #Checking if player has sufficent funds available
+            else
+              new_unit = @createNewTower(desired_unit_type, "red", desired_pos)
+          if speaker is @hero2
+            if @world.getSystem('Inventory').teamGold.ogres.gold < desired_unit_params.cost
+            else
+              new_unit = @createNewTower(desired_unit_type, "blue", desired_pos)
 
 
   checkWinner: () -> #Checks if a player has died at any given point in the game
