@@ -3,20 +3,20 @@
     #units information below
     warrior: {
       health: 40,
-      damage: 8,
+      damage: 13,
       attackCooldown: 1,
       attackRange: 5,
-      speed: 12,
-      cost: 25
+      speed: 16,
+      cost: 30
     },
 
     knight: {
-      health: 70,
-      damage: 10,
+      health: 50,
+      damage: 16,
       attackCooldown: 1,
       attackRange: 5,
-      speed: 8,
-      cost: 15
+      speed: 10,
+      cost: 25
     },
 
     thief: {
@@ -24,7 +24,7 @@
       damage: 10,
       attackCooldown: 1,
       attackRange: 4,
-      speed: 16,
+      speed: 22,
       cost: 30
     },
     wizard: {
@@ -33,15 +33,15 @@
       attackCooldown: 2,
       attackRange: 30,
       speed: 10,
-      cost: 20
+      cost: 40
     },
     archer: {
       health: 20,
-      damage: 10,
+      damage: 11,
       attackCooldown: 1,
       attackRange: 20,
       speed: 14,
-      cost: 20
+      cost: 30
     },
     thrower: {
       health: 25,
@@ -49,7 +49,7 @@
       attackCooldown: 1,
       attackRange: 10,
       speed: 15,
-      cost: 25
+      cost: 20
     },
     buffer: {
       health: 10,
@@ -57,7 +57,7 @@
       attackCooldown: 2,
       attackRange: 20,
       speed: 8,
-      cost: 30
+      cost: 70
     },
     warlock: {
       health: 10,
@@ -65,11 +65,11 @@
       attackCooldown: 2,
       attackRange: 20,
       speed: 8,
-      cost: 40
+      cost: 100
     },
     peasant: {
       health: 10,
-      damage: -5,
+      damage: 0,
       attackCooldown: 0.5,
       attackRange: 5,
       speed: 10,
@@ -77,7 +77,7 @@
     },
     #below is the enemies information
     soldier:{
-      health: 50,
+      health: 30,
       damage: 20,
       attackCooldown: 0.5,
       attackRange: 5,
@@ -305,7 +305,7 @@
         desired_pos = message_arr[1]
         desired_unit_params = @UNIT_PARAMETERS[desired_unit_type]
 
-
+        
 
         if @UNIT_PARAMETERS[desired_unit_type]
           if speaker is @hero   #Checking which hero said the message (i.e. red or blue)
