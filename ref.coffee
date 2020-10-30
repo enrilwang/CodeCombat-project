@@ -129,11 +129,8 @@
       speed: 4
       cost:6
 
-    },
-    potion:{
-      cost:10
-
     }
+   
   }
 
   WAVE_INFO: {      #Dictionary storing information for each wave of AI units being spawned
